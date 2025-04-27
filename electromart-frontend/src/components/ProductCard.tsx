@@ -1,65 +1,88 @@
 // src/components/ProductCard.tsx
-import React from 'react';
+import React from "react";
+import { Link } from "react-router-dom";
+import { Product } from "../data/mockData";
 
-// Define an interface for the product data we expect
-// This should match the structure of your product data later (from backend/mock)
-export interface Product {
-  id: number | string; // Can be number or string depending on your backend
-  name: string;
-  description: string;
-  price: number;
-  imageUrl?: string; // Optional image URL
-  // Add other fields as needed (e.g., brand, category, stock)
-}
-
-// Define the props for the ProductCard component
 interface ProductCardProps {
-  product: Product; // It expects a single 'product' object
+  product: Product;
+  displayImageUrl?: string; // <-- Accept the prop
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
-  // Fallback image if imageUrl is not provided
-  const imageUrl = product.imageUrl || 'https://via.placeholder.com/300x200?text=No+Image';
+const ProductCard: React.FC<ProductCardProps> = ({
+  product,
+  displayImageUrl,
+}) => {
+  // <-- Destructure prop
 
-  // Placeholder function for adding to cart
-  const handleAddToCart = () => {
+  // Use the passed-in prop or the fallback
+  const imageUrl =
+    displayImageUrl ||
+    "https://png.pngtree.com/png-vector/20190820/ourmid/pngtree-no-image-vector-illustration-isolated-png-image_1694547.jpg"; // Use prop + fallback
+
+  const handleAddToCart = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+    event.preventDefault();
     alert(`Added ${product.name} to cart! (ID: ${product.id})`);
-    // Later, this will dispatch an action or call an API
   };
 
   return (
-    <div className="border rounded-lg overflow-hidden shadow-lg bg-white flex flex-col">
+    <Link
+      to={`/product/${product.id}`}
+      className="border rounded-lg overflow-hidden shadow-lg bg-white flex flex-col hover:shadow-xl transition-shadow duration-200"
+    >
       {/* Product Image */}
-      <img
-        src={imageUrl}
-        alt={product.name}
-        className="w-full h-48 object-cover" // Fixed height, object-cover prevents distortion
-      />
+      <div className="w-full h-48 overflow-hidden">
+        <img
+          src={imageUrl} // <-- Use the final imageUrl variable
+          alt={product.name}
+          className="w-full h-full object-cover"
+        />
+      </div>
 
       {/* Card Body */}
-      <div className="p-4 flex flex-col flex-grow"> {/* flex-grow makes body expand */}
+      <div className="p-4 flex flex-col flex-grow">
+        {/* ... (rest of the card content: name, description, stock, price, button) ... */}
         {/* Product Name */}
-        <h3 className="text-lg font-semibold mb-2 text-gray-800">{product.name}</h3>
-
-        {/* Product Description (Truncated) */}
-        <p className="text-sm text-gray-600 mb-4 flex-grow"> {/* Truncate long descriptions */}
+        <h3 className="text-lg font-semibold mb-2 text-gray-800">
+          {product.name}
+        </h3>
+        {/* Product Description */}
+        <p className="text-sm text-gray-600 mb-4 flex-grow">
           {product.description.length > 100
             ? `${product.description.substring(0, 97)}...`
             : product.description}
         </p>
-
-        {/* Price and Add to Cart Button */}
-        <div className="mt-auto flex items-center justify-between"> {/* mt-auto pushes this to bottom */}
-          <span className="text-xl font-bold text-gray-900">NOK {product.price.toFixed(2)}</span> {/* Format price */}
+        {/* Stock Status */}
+        <div className="text-sm mb-3">
+          {product.isActive ? (
+            product.stockQuantity > 0 ? (
+              <span className="text-green-600 font-medium">In Stock</span>
+            ) : (
+              <span className="text-red-600 font-medium">Out of Stock</span>
+            )
+          ) : (
+            <span className="text-gray-500 font-medium">Discontinued</span>
+          )}
+        </div>
+        {/* Price and Button */}
+        <div className="mt-auto flex items-center justify-between">
+          <span className="text-xl font-bold text-gray-900">
+            NOK {product.price.toFixed(2)}
+          </span>
           <button
             onClick={handleAddToCart}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded transition duration-200"
+            disabled={!product.isActive || product.stockQuantity <= 0}
+            className={`bg-blue-600 text-white font-semibold py-2 px-4 rounded transition duration-200 z-10 relative ${
+              !product.isActive || product.stockQuantity <= 0
+                ? "opacity-50 cursor-not-allowed"
+                : "hover:bg-blue-700"
+            }`}
           >
             Add to Cart
           </button>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 

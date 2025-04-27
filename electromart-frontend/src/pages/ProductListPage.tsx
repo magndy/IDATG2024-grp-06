@@ -2,11 +2,12 @@ import React from "react";
 import { useParams } from "react-router-dom";
 // Import data and types from the shared file
 import {
-  Product,
   mockProducts,
   Category,
   mockCategories,
-} from "../data/mockData"; // Adjust path if needed
+  mockProductImages,
+  ProductImage,
+} from "../data/mockData";
 import ProductCard from "../components/ProductCard";
 
 // Function to get all descendant category IDs including the starting one
@@ -68,9 +69,24 @@ const ProductListPage: React.FC = () => {
       <h1 className="text-3xl font-bold mb-8 text-gray-800">{pageTitle}</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {filteredProducts.length > 0 ? (
-          filteredProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))
+          filteredProducts.map((product) => {
+            // --- Find the first image for this product ---
+            const productImage = mockProductImages.find(
+              (img: ProductImage) =>
+                img.productId.toString() === product.id.toString()
+            );
+            const imageUrlForCard = productImage?.imageUrl; // Get URL or undefined
+            // --- End find image ---
+
+            return (
+              <ProductCard
+                key={product.id}
+                product={product}
+                // --- Pass the found image URL as a prop ---
+                displayImageUrl={imageUrlForCard}
+              />
+            );
+          })
         ) : (
           <p className="col-span-full text-center text-gray-500">
             No products found in this category or its subcategories.

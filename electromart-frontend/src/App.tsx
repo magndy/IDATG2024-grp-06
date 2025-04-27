@@ -1,6 +1,6 @@
 // src/App.tsx
-import React from "react";
 import { Routes, Route } from "react-router-dom"; // Only need Routes and Route now
+import ProductDetailPage from "./pages/ProductDetailPage"; // Add this line
 
 // Import the Layout component
 import MainLayout from "./layouts/MainLayout";
@@ -23,6 +23,7 @@ function App() {
         {/* This route handles paths like /category/6, /category/9 etc. */}
         {/* ':categoryId' makes 'categoryId' a URL parameter */}
         <Route path="/category/:categoryId" element={<ProductListPage />} />
+        <Route path="/product/:productId" element={<ProductDetailPage />} />
 
         {/* Catch-all route - Note: Link is removed as it's now in MainLayout */}
         <Route

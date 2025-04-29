@@ -1,5 +1,11 @@
 USAGE:
 
+# Make a config file
+```bash
+cd backend/server/
+touch my.cnf
+# see .example for how to configure
+```
 
 ```bash
 # activate the virtual enviroment

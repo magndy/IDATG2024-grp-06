@@ -34,58 +34,61 @@ CREATE TABLE product_image (
     FOREIGN KEY (product_id) REFERENCES product(product_id) ON DELETE CASCADE
 );
 
+CREATE TABLE city (
+    city_id INT PRIMARY KEY,
+    city_name VARCHAR(100) NOT NULL,
+    postal_code VARCHAR(100) NOT NULL,
+    country VARCHAR(100) NOT NULL
+);
+
 CREATE TABLE address (
     address_id INT PRIMARY KEY,
-    address_line VARCHAR(255) NOT NULL,
-    city VARCHAR(100) NOT NULL,
-    postal_code VARCHAR(20) NOT NULL,
-    country VARCHAR(100) NOT NULL
+    address_line VARCHAR(255) NOT NULl,
+    city_id INT NOT NULL,
+    FOREIGN KEY (city_id) REFERENCES city(city_id) ON DELETE CASCADE
 );
 
 CREATE TABLE `user` (
     user_id INT PRIMARY KEY,
-    name VARCHAR(100),
+    username VARCHAR(100),
     first_name VARCHAR(100),
     last_name VARCHAR(100),
-    username VARCHAR(100) UNIQUE NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
-    address_id INT,
-    phone VARCHAR(20),
-    role VARCHAR(50) DEFAULT 'customer',
-    FOREIGN KEY (address_id) REFERENCES address(address_id) ON DELETE CASCADE
+    address INT,
+    phone VARCHAR(20) UNIQUE NOT NULL,
+    role VARCHAR(50) DEFAULT 'customer', /*admin, customer*/
+    FOREIGN KEY (address) REFERENCES address(address_id) ON DELETE CASCADE
 );
 
 CREATE TABLE shopping_cart (
     cart_id INT PRIMARY KEY,
-    user_id INT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    user_id INT NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES `user` (user_id) ON DELETE CASCADE
 );
 
 CREATE TABLE cart_item (
     cart_item_id INT PRIMARY KEY,
-    cart_id INT,
-    product_id INT,
-    quantity INT NOT NULL,
+    cart_id INT NOT NULL,
+    product_id INT NOT NULL,
     FOREIGN KEY (cart_id) REFERENCES shopping_cart(cart_id) ON DELETE CASCADE,
     FOREIGN KEY (product_id) REFERENCES product(product_id) ON DELETE CASCADE
 );
 
 CREATE TABLE order_status (
     status_id INT PRIMARY KEY,
-    status_name VARCHAR(50) NOT NULL
+    status_name VARCHAR(50) NOT NULL /* PROCESSING, DELIVERED, CANCELLED */
 );
 
 CREATE TABLE `order` (
     order_id INT PRIMARY KEY,
-    user_id INT,
+    user_id INT NOT NULL,
     order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     total_amount INT NOT NULL, 
-    order_status_id INT,
-    tracking_number VARCHAR(100),
-    shipping_address_id INT,
+    order_status_id INT NOT NULL,
+    tracking_number VARCHAR(100) NOT NULL,
+    shipping_address_id INT NOT NULL,
     FOREIGN KEY (user_id) REFERENCES `user` (user_id) ON DELETE CASCADE,
     FOREIGN KEY (order_status_id) REFERENCES order_status (status_id) ON DELETE CASCADE,
     FOREIGN KEY (shipping_address_id) REFERENCES address (address_id) ON DELETE CASCADE
@@ -97,23 +100,22 @@ CREATE TABLE order_item (
     product_id INT NULL,
     quantity INT NOT NULL,
     price_per_unit INT NOT NULL,
-    subtotal INT NOT NULL,
     FOREIGN KEY (order_id) REFERENCES `order` (order_id) ON DELETE CASCADE,
     FOREIGN KEY (product_id) REFERENCES product (product_id) ON DELETE CASCADE
 );
 
 CREATE TABLE payment_status (
     payment_status_id INT PRIMARY KEY,
-    status_name VARCHAR(50) NOT NULL
+    status_name VARCHAR(50) NOT NULL /*COMPLETING, PENDING, FAILED*/
 );
 
 CREATE TABLE payment (
     payment_id INT PRIMARY KEY,
-    order_id INT,
+    order_id INT NOT NULL,
     payment_method VARCHAR(50) NOT NULL,
     amount DECIMAL(10, 2) NOT NULL,
     payment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    payment_status_id INT,
+    payment_status_id INT NOT NULL,
     FOREIGN KEY (order_id) REFERENCES `order` (order_id) ON DELETE CASCADE,
     FOREIGN KEY (payment_status_id) REFERENCES payment_status (payment_status_id) ON DELETE CASCADE
 );

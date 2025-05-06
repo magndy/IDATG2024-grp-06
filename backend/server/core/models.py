@@ -2,12 +2,20 @@ from django.db import models
 
 class Brand(models.Model):
     name = models.CharField(max_length=100)
-    description = models.TextField(blank=True)
+    description = models.TextField()
+
+    class Meta:
+        db_table = 'brand'
+
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
-    description = models.TextField(blank=True)
+    description = models.TextField()
     parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = 'category'
+
 
 class Product(models.Model):
     name = models.CharField(max_length=100)
@@ -17,57 +25,100 @@ class Product(models.Model):
     brand = models.ForeignKey(Brand, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
+    class Meta:
+        db_table = 'product'
+
+
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     image_url = models.URLField()
 
-class Address(models.Model):
-    address_line = models.CharField(max_length=255)
-    city = models.CharField(max_length=100)
-    postal_code = models.CharField(max_length=20)
+    class Meta:
+        db_table = 'product_image'
+
+
+class City(models.Model):
+    city_name = models.CharField(max_length=100)
+    postal_code = models.CharField(max_length=100)
     country = models.CharField(max_length=100)
 
+    class Meta:
+        db_table = 'city'
+
+
+class Address(models.Model):
+    address_line = models.CharField(max_length=255)
+    city = models.ForeignKey(City, on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = 'address'
+
+
 class User(models.Model):
-    name = models.CharField(max_length=100, blank=True)
-    first_name = models.CharField(max_length=100, blank=True)
-    last_name = models.CharField(max_length=100, blank=True)
+    username = models.CharField(max_length=100)
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
     email = models.EmailField(unique=True)
-    password = models.CharField(max_length=100)
-    phone_number = models.CharField(max_length=20, blank=True)
-    address = models.ForeignKey(Address, null=True, blank=True, on_delete=models.SET_NULL)
-    phone = models.CharField(max_length=20, blank=True)
-    role = models.CharField(max_length=50,default='customer')
+    password = models.CharField(max_length=255)
+    address = models.ForeignKey(Address, on_delete=models.CASCADE)
+    phone = models.CharField(max_length=20, unique=True)
+    role = models.CharField(max_length=50, default='customer')  # 'admin' or 'customer'
+
+    class Meta:
+        db_table = 'user'
+
 
 class ShoppingCart(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'shopping_cart'
+
 
 class CartItem(models.Model):
     cart = models.ForeignKey(ShoppingCart, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    quantity = models.IntegerField()
+
+    class Meta:
+        db_table = 'cart_item'
+
 
 class OrderStatus(models.Model):
-    status_name = models.CharField(max_length=50)
+    status_name = models.CharField(max_length=50)  # PROCESSING, DELIVERED, CANCELLED
+
+    class Meta:
+        db_table = 'order_status'
+
 
 class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     order_date = models.DateTimeField(auto_now_add=True)
-    total_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    total_amount = models.IntegerField()
     order_status = models.ForeignKey(OrderStatus, on_delete=models.CASCADE)
-    tracking_number = models.CharField(max_length=100, blank=True)
-    shipping_address = models.ForeignKey(Address, null=True, blank=True, on_delete=models.SET_NULL)
+    tracking_number = models.CharField(max_length=100)
+    shipping_address = models.ForeignKey(Address, on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = 'order'
+
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, null=True, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.IntegerField()
-    price_per_unit = models.DecimalField(max_digits=10, decimal_places=2)
-    subtotal = models.DecimalField(max_digits=10, decimal_places=2)
+    price_per_unit = models.IntegerField()
+
+    class Meta:
+        db_table = 'order_item'
+
 
 class PaymentStatus(models.Model):
-    status_name = models.CharField(max_length=50)
+    status_name = models.CharField(max_length=50)  # COMPLETING, PENDING, FAILED
+
+    class Meta:
+        db_table = 'payment_status'
+
 
 class Payment(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
@@ -75,3 +126,6 @@ class Payment(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     payment_date = models.DateTimeField(auto_now_add=True)
     payment_status = models.ForeignKey(PaymentStatus, on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = 'payment'

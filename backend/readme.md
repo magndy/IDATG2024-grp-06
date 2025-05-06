@@ -14,6 +14,15 @@ source server-venv/bin/activate
 # install dependencies
 pip freeze > requirements.txt
 
+# MacOS spesific packages (via homebrew)
+brew install mysql 
+brew install pkg-config  
+brew install openssl   
+
+# start mysql (on MacOS)
+brew services start mysql
+
+
 # navigate to server/
 python manage.py runserver
 

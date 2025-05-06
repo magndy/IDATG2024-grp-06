@@ -19,8 +19,16 @@ from django.urls import path
 from server.homepage import home
 from server.views import index
 
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import ProductViewSet
+
+router = DefaultRouter()
+router.register(r'products', ProductViewSet)
+
 urlpatterns = [
     path('', home,name='home'),
     path('testInput/', index,name='index'),
     path('admin/', admin.site.urls),
+    path('api/', include(router.urls)),
 ]

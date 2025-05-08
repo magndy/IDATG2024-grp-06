@@ -16,8 +16,18 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
-    filterset_fields = ['category', 'brand']       # Change from 'categoryid' to 'category'
-    search_fields = ['id', 'name', 'description']  # Added more useful search fields
+    filterset_fields = []
+    search_fields = ['name']
+    
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        category = self.request.query_params.get('category', None)
+        
+        if category:
+            # Use exact matching for category name
+            queryset = queryset.filter(category__name=category)
+            
+        return queryset
 
 
 class ProductImageViewSet(viewsets.ReadOnlyModelViewSet):

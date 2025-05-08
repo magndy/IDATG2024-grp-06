@@ -1,26 +1,15 @@
 from rest_framework import viewsets
 from .models import (
-    Brand, Category, Product, ProductImage, Address, User,
+    Product, ProductImage, Address, User,
     ShoppingCart, CartItem, OrderStatus, Order, OrderItem,
     PaymentStatus, Payment
 )
 from .serializers import (
-    BrandSerializer, CategorySerializer, ProductSerializer, ProductImageSerializer,
+    ProductSerializer, ProductImageSerializer,
     AddressSerializer, UserSerializer, ShoppingCartSerializer, CartItemSerializer,
     OrderStatusSerializer, OrderSerializer, OrderItemSerializer,
     PaymentStatusSerializer, PaymentSerializer
 )
-
-
-class BrandViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Brand.objects.all()
-    serializer_class = BrandSerializer
-
-
-class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializer
-
 
 class ProductViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Product.objects.all()

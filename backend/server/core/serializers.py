@@ -8,16 +8,24 @@ from .models import (
 class BrandSerializer(serializers.ModelSerializer):
     class Meta:
         model = Brand
-        fields = '__all__'
+        fields = ['name', 'description']
 
 
 class CategorySerializer(serializers.ModelSerializer):
+    parent = serializers.SerializerMethodField()
     class Meta:
         model = Category
-        fields = '__all__'
+        fields = ['name', 'description', 'parent'] 
 
+    def get_parent(self, obj):
+        if obj.parent:
+            return CategorySerializer(obj.parent).data
+        return None
 
 class ProductSerializer(serializers.ModelSerializer):
+    brand = BrandSerializer(read_only=True)
+    category = CategorySerializer(read_only=True)
+
     class Meta:
         model = Product
         fields = '__all__'
@@ -30,18 +38,21 @@ class ProductImageSerializer(serializers.ModelSerializer):
 
 
 class AddressSerializer(serializers.ModelSerializer):
+    city = serializers.CharField(source='city.city_name', read_only=True) 
     class Meta:
         model = Address
-        fields = '__all__'
+        fields = ['address_line', 'city']
 
 
 class UserSerializer(serializers.ModelSerializer):
+    address = AddressSerializer(read_only=True)
     class Meta:
         model = User
         fields = '__all__'
 
 
 class ShoppingCartSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = ShoppingCart
         fields = '__all__'

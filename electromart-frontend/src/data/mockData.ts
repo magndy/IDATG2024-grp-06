@@ -14,10 +14,9 @@ export interface Category {
     name: string;
     description: string;
     price: number;
-    categoryId: number;
+    category: number;
     stockQuantity: number;
     brandId: number;
-    isActive: boolean;
   }
 
   export interface ProductImage {

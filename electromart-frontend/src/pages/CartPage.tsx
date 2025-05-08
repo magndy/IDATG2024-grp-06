@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { useCart } from '../hooks/useCart';
-import { ProductImage } from '../data/mockData';
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { useCart } from "../hooks/useCart";
+import { ProductImage } from "../data/mockData";
 
 const CartPage = () => {
-  const { cartItems, removeFromCart, updateQuantity, clearCart, getCartTotal } = useCart();
+  const { cartItems, removeFromCart, updateQuantity, clearCart, getCartTotal } =
+    useCart();
 
   const [productImages, setProductImages] = useState<ProductImage[]>([]);
   const [isLoadingImages, setIsLoadingImages] = useState<boolean>(true);
@@ -15,7 +16,7 @@ const CartPage = () => {
       setIsLoadingImages(true);
       setImageError(null);
       try {
-        const response = await fetch('/mock-data/productImages.json');
+        const response = await fetch("/mock-data/productImages.json");
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -23,7 +24,7 @@ const CartPage = () => {
         setProductImages(data);
       } catch (e) {
         console.error("Failed to fetch product images for cart:", e);
-        setImageError(e instanceof Error ? e.message : 'Failed to load images');
+        setImageError(e instanceof Error ? e.message : "Failed to load images");
       } finally {
         setIsLoadingImages(false);
       }
@@ -39,11 +40,19 @@ const CartPage = () => {
           <div className="w-3/4 bg-white px-10 py-10">
             <div className="flex justify-between border-b pb-8">
               <h1 className="font-semibold text-2xl">Shopping Cart</h1>
-              <h2 className="font-semibold text-2xl">{cartItems.length} Items</h2>
+              <h2 className="font-semibold text-2xl">
+                {cartItems.length} Items
+              </h2>
             </div>
             <p className="text-gray-500">Your cart is currently empty.</p>
-            <Link to="/products" className="flex font-semibold text-indigo-600 text-sm mt-10">
-              <svg className="fill-current mr-2 text-indigo-600 w-4" viewBox="0 0 448 512">
+            <Link
+              to="/products"
+              className="flex font-semibold text-indigo-600 text-sm mt-10"
+            >
+              <svg
+                className="fill-current mr-2 text-indigo-600 w-4"
+                viewBox="0 0 448 512"
+              >
                 <path d="M134.059 296H436c6.627 0 12-5.373 12-12v-56c0-6.627-5.373-12-12-12H134.059v-46.059c0-21.382-25.851-32.09-40.971-16.971L7.029 239.029c-9.373 9.373-9.373 24.569 0 33.941l86.059 86.059c15.119 15.119 40.971 4.411 40.971-16.971V296z" />
               </svg>
               Continue Shopping
@@ -54,8 +63,8 @@ const CartPage = () => {
     );
   }
 
-   // Handle Image Loading State
-   if (isLoadingImages) {
+  // Handle Image Loading State
+  if (isLoadingImages) {
     // You might want a more integrated loading state later,
     // but this shows a message while images load.
     return <div className="text-center p-10">Loading cart images...</div>;
@@ -78,20 +87,34 @@ const CartPage = () => {
             <h2 className="font-semibold text-2xl">{cartItems.length} Items</h2>
           </div>
           <div className="flex mt-10">
-            <h3 className="font-semibold text-gray-600 text-xs uppercase w-2/5">Product Details</h3>
-            <h3 className="font-semibold text-gray-600 text-xs uppercase w-1/5 text-center">Quantity</h3>
-            <h3 className="font-semibold text-gray-600 text-xs uppercase w-1/5 text-center">Price</h3>
-            <h3 className="font-semibold text-gray-600 text-xs uppercase w-1/5 text-center">Total</h3>
+            <h3 className="font-semibold text-gray-600 text-xs uppercase w-2/5">
+              Product Details
+            </h3>
+            <h3 className="font-semibold text-gray-600 text-xs uppercase w-1/5 text-center">
+              Quantity
+            </h3>
+            <h3 className="font-semibold text-gray-600 text-xs uppercase w-1/5 text-center">
+              Price
+            </h3>
+            <h3 className="font-semibold text-gray-600 text-xs uppercase w-1/5 text-center">
+              Total
+            </h3>
           </div>
 
           {cartItems.map((item) => {
             const productImage = productImages.find(
-              (img: ProductImage) => img.productId.toString() === item.id.toString()
+              (img: ProductImage) =>
+                img.productId.toString() === item.id.toString()
             );
-            const imageUrlForCartItem = productImage?.imageUrl || 'https://via.placeholder.com/80?text=No+Img';
+            const imageUrlForCartItem =
+              productImage?.imageUrl ||
+              "https://via.placeholder.com/80?text=No+Img";
 
             return (
-              <div key={item.id} className="flex items-center hover:bg-gray-100 -mx-8 px-6 py-5">
+              <div
+                key={item.id}
+                className="flex items-center hover:bg-gray-100 -mx-8 px-6 py-5"
+              >
                 <div className="flex w-2/5">
                   <div className="w-20 h-24 flex items-center justify-center bg-gray-100 rounded">
                     <img
@@ -138,14 +161,24 @@ const CartPage = () => {
                   </button>
                 </div>
 
-                <span className="text-center w-1/5 font-semibold text-sm">${item.price}</span>
-                <span className="text-center w-1/5 font-semibold text-sm">${(item.price * item.quantity).toFixed(2)}</span>
+                <span className="text-center w-1/5 font-semibold text-sm">
+                  ${item.price}
+                </span>
+                <span className="text-center w-1/5 font-semibold text-sm">
+                  ${(item.price * item.quantity).toFixed(2)}
+                </span>
               </div>
             );
           })}
 
-          <Link to="/products" className="flex font-semibold text-indigo-600 text-sm mt-10">
-            <svg className="fill-current mr-2 text-indigo-600 w-4" viewBox="0 0 448 512">
+          <Link
+            to="/products"
+            className="flex font-semibold text-indigo-600 text-sm mt-10"
+          >
+            <svg
+              className="fill-current mr-2 text-indigo-600 w-4"
+              viewBox="0 0 448 512"
+            >
               <path d="M134.059 296H436c6.627 0 12-5.373 12-12v-56c0-6.627-5.373-12-12-12H134.059v-46.059c0-21.382-25.851-32.09-40.971-16.971L7.029 239.029c-9.373 9.373-9.373 24.569 0 33.941l86.059 86.059c15.119 15.119 40.971 4.411 40.971-16.971V296z" />
             </svg>
             Continue Shopping
@@ -153,15 +186,19 @@ const CartPage = () => {
         </div>
 
         <div className="w-1/4 px-8 py-10 bg-gray-100">
-          <h1 className="font-semibold text-2xl border-b pb-8">Order Summary</h1>
+          <h1 className="font-semibold text-2xl border-b pb-8">
+            Order Summary
+          </h1>
           <div className="mt-8">
             <div className="flex font-semibold justify-between py-6 text-sm uppercase">
               <span>Total cost</span>
               <span>${getCartTotal().toFixed(2)}</span>
             </div>
-            <button className="bg-indigo-500 hover:bg-indigo-700 font-semibold py-3 text-sm text-white uppercase w-full">
-              Checkout
-            </button>
+            <Link to="/checkout">
+              <button className="bg-indigo-500 hover:bg-indigo-700 font-semibold py-3 text-sm text-white uppercase w-full">
+                Checkout
+              </button>
+            </Link>
             <button
               onClick={clearCart}
               className="mt-3 bg-red-500 hover:bg-red-700 font-semibold py-3 text-sm text-white uppercase w-full"

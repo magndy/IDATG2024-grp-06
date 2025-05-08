@@ -38,9 +38,9 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   useEffect(() => {
     const fetchCategories = async () => {
       setIsLoadingCategories(true); // Start loading
-      setCategoryError(null);     // Reset error
+      setCategoryError(null); // Reset error
       try {
-        const response = await fetch('/mock-data/categories.json'); // Fetch from public folder
+        const response = await fetch("/mock-data/categories.json"); // Fetch from public folder
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -49,10 +49,11 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         // Build the tree *after* fetching and setting the flat list
         const tree = buildCategoryTree(data);
         setCategoryTree(tree); // Store the nested tree
-
       } catch (e) {
         console.error("Failed to fetch categories:", e);
-        setCategoryError(e instanceof Error ? e.message : 'Failed to load categories');
+        setCategoryError(
+          e instanceof Error ? e.message : "Failed to load categories"
+        );
         setCategoryTree([]); // Clear tree on error
       } finally {
         setIsLoadingCategories(false); // Stop loading regardless of success/error
@@ -72,11 +73,13 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         <ul className="flex space-x-6 container mx-auto">
           {/* Home Link */}
           <li>
-            <Link to="/" className="hover:text-gray-300 transition duration-200">
+            <Link
+              to="/"
+              className="hover:text-gray-300 transition duration-200"
+            >
               Home
             </Link>
           </li>
-
           {/* Products Dropdown Item */}
           <li
             className="relative"
@@ -101,11 +104,17 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
               <div className="absolute left-0 top-full w-56 bg-white rounded-md shadow-xl z-20 py-1">
                 {/* --- Conditional Rendering for Loading/Error/Data --- */}
                 {isLoadingCategories ? (
-                  <div className="px-4 py-2 text-sm text-gray-500">Loading categories...</div>
+                  <div className="px-4 py-2 text-sm text-gray-500">
+                    Loading categories...
+                  </div>
                 ) : categoryError ? (
-                  <div className="px-4 py-2 text-sm text-red-600">Error: {categoryError}</div>
+                  <div className="px-4 py-2 text-sm text-red-600">
+                    Error: {categoryError}
+                  </div>
                 ) : categoryTree.length === 0 ? (
-                    <div className="px-4 py-2 text-sm text-gray-500">No categories found.</div>
+                  <div className="px-4 py-2 text-sm text-gray-500">
+                    No categories found.
+                  </div>
                 ) : (
                   // Map over the categoryTree *STATE* variable
                   categoryTree.map((category) => (
@@ -162,18 +171,18 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
             )}
           </li>
           {/* End Products Dropdown Item */}
-
           {/* Spacer element to push cart to the right */}
-          <li className="flex-grow"></li> {/* This pushes following items to the end */}
-
+          <li className="flex-grow"></li>{" "}
+          {/* This pushes following items to the end */}
           {/* --- Cart Link/Icon --- */}
-          <li className="relative"> {/* Use relative for positioning the badge */}
+          <li className="relative">
+            {" "}
+            {/* Use relative for positioning the badge */}
             <Link
-                to="/cart" // Link to the future cart page
-                className="hover:text-gray-300 transition duration-200 p-2 flex items-center" // Added padding and flex
+              to="/cart" // Link to the future cart page
+              className="hover:text-gray-300 transition duration-200 p-2 flex items-center" // Added padding and flex
             >
               <FaShoppingCart size={20} /> {/* The cart icon */}
-
               {/* Badge: Show only if itemCount > 0 */}
               {itemCount > 0 && (
                 <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
@@ -183,9 +192,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
             </Link>
           </li>
           {/* --- End Cart Link/Icon --- */}
-
           {/* You might add Login/Register links after the cart later */}
-          
         </ul>
       </nav>
 

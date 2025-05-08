@@ -25,7 +25,7 @@ class Product(models.Model):
     stock_quantity = models.IntegerField()
     #isactive = models.BooleanField(True) # TODO can be implemented if administration is required.
     brand = models.ForeignKey(Brand, on_delete=models.CASCADE, db_column='brand_id', null=True)  # Added db_column and null=True
-    categoryid = models.ForeignKey(Category, on_delete=models.CASCADE, db_column='category_id', null=True)  # Added db_column and null=True
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, db_column='category_id', null=True)  # Added db_column and null=True
     class Meta:
         managed = False
         db_table = 'product'

@@ -13,9 +13,8 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ProductSerializer(serializers.ModelSerializer):
-    brand = BrandSerializer(read_only=True)          # Override the brand field
-    categoryid = CategorySerializer(read_only=True)  # Override the category field
-    
+    brand = BrandSerializer(read_only=True)        # Override the brand field
+    category = CategorySerializer(read_only=True)  # Override the category field
     class Meta:
         model = Product
         fields = '__all__'

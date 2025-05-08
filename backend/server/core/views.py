@@ -21,12 +21,16 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
     
     def get_queryset(self):
         queryset = super().get_queryset()
+
         category = self.request.query_params.get('category', None)
-        
         if category:
             # Use exact matching for category name
             queryset = queryset.filter(category__name=category)
             
+        id = self.request.query_params.get('id', None)
+        if id:
+            queryset = queryset.filter(id=id)
+
         return queryset
 
 

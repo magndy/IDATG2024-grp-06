@@ -56,7 +56,7 @@ const CheckoutPage: React.FC = () => {
     );
 
     clearCart();
-    navigate("/products");
+    navigate("/order-confirmation");
   };
 
   // Prevent checkout if cart is empty (remains the same)

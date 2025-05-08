@@ -3,7 +3,8 @@ import React, { useState, useEffect } from "react"; // Import useState AND useEf
 import { Link } from "react-router-dom";
 import { Category, CategoryNode } from "../data/mockData"; // Keep type imports
 import { useCart } from "../hooks/useCart";
-import { FaShoppingCart } from "react-icons/fa";
+import { useAuth } from "../hooks/useAuth";
+import { FaShoppingCart, FaUserCircle } from "react-icons/fa";
 
 // Define the type for the component props (remains the same)
 type MainLayoutProps = {
@@ -64,6 +65,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   }, []); // Empty dependency array `[]` means this runs only once when the component mounts
 
   const { getItemCount } = useCart();
+  const { currentUser, logout } = useAuth();
   const itemCount = getItemCount();
 
   return (
@@ -174,6 +176,46 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           {/* Spacer element to push cart to the right */}
           <li className="flex-grow"></li>{" "}
           {/* This pushes following items to the end */}
+          {/* --- Conditional Auth Links/Info --- */}
+          {currentUser ? (
+            // --- Logged IN View ---
+            <>
+              <li className="flex items-center text-sm text-gray-300">
+                <FaUserCircle className="mr-1" /> {/* User Icon */}
+                {/* Display name if available, otherwise email */}
+                Welcome, {currentUser.name || currentUser.email}
+              </li>
+              <li>
+                <button
+                  onClick={logout} // Call logout function from context
+                  className="hover:text-gray-300 transition duration-200 px-2 py-1 text-sm"
+                >
+                  Logout
+                </button>
+              </li>
+            </>
+          ) : (
+            // --- Logged OUT View ---
+            <>
+              <li>
+                <Link
+                  to="/login"
+                  className="hover:text-gray-300 transition duration-200 text-sm"
+                >
+                  Login
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/register"
+                  className="hover:text-gray-300 transition duration-200 text-sm"
+                >
+                  Register
+                </Link>
+              </li>
+            </>
+          )}
+          {/* --- End Conditional Auth Links --- */}
           {/* --- Cart Link/Icon --- */}
           <li className="relative">
             {" "}

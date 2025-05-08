@@ -1,4 +1,5 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, filters
+from django_filters.rest_framework import DjangoFilterBackend
 from .models import (
     Product, ProductImage, Address, User,
     ShoppingCart, CartItem, OrderStatus, Order, OrderItem,
@@ -14,6 +15,9 @@ from .serializers import (
 class ProductViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filterset_fields = ['category', 'brand']       # Change from 'categoryid' to 'category'
+    search_fields = ['id', 'name', 'description']  # Added more useful search fields
 
 
 class ProductImageViewSet(viewsets.ReadOnlyModelViewSet):

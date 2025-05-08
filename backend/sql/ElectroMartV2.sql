@@ -23,6 +23,7 @@ CREATE TABLE product (
     stock_quantity INT NOT NULL,
     brand_id INT,
     category_id INT,
+    is_active BOOLEAN DEFAULT TRUE,
     FOREIGN KEY (brand_id) REFERENCES brand(brand_id) ON DELETE CASCADE,
     FOREIGN KEY (category_id) REFERENCES category(category_id) ON DELETE CASCADE
 );

@@ -48,11 +48,38 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 class ShoppingCartViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = ShoppingCart.objects.all()
     serializer_class = ShoppingCartSerializer
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filterset_fields = []
+    search_fields = ['user']
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        user = self.request.query_params.get('userid', None)
+        
+        if user:
+            # Use exact matching for category name
+            queryset = queryset.filter(user_id=user)
+            
+        return queryset
 
 class CartItemViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = CartItem.objects.all()
     serializer_class = CartItemSerializer
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filterset_fields = []
+    search_fields = ['cart']
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        cart = self.request.query_params.get('cartid', None)
+        
+        if cart:
+            # Use exact matching for category name
+            queryset = queryset.filter(cart_id=cart)
+            
+        return queryset
+
+
 
 
 class OrderStatusViewSet(viewsets.ReadOnlyModelViewSet):

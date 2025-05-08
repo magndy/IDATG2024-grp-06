@@ -30,32 +30,39 @@ class Product(models.Model):
         db_table = 'product'
 
 class ProductImage(models.Model):
-    id = models.AutoField(primary_key=True, db_column='productimage_id')
+    id = models.AutoField(primary_key=True, db_column='image_id')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     image_url = models.URLField()
     class Meta:
         managed = False
         db_table = 'product_image'
 
+class City(models.Model):
+    id = models.AutoField(primary_key=True, db_column='city_id')
+    city_name = models.CharField(max_length=100)
+    postal_code = models.CharField(max_length=100)
+    country = models.CharField(max_length=100)
+    class Meta:
+        managed = False
+        db_table = 'city'
+
+
 class Address(models.Model):
     id = models.AutoField(primary_key=True, db_column='address_id')
     address_line = models.CharField(max_length=255)
-    city = models.CharField(max_length=100)
-    postal_code = models.CharField(max_length=20)
-    country = models.CharField(max_length=100)
+    city = models.ForeignKey(City, on_delete=models.CASCADE, db_column='city_id', null=True)
     class Meta:
         managed = False
         db_table = 'address'
 
 class User(models.Model):
-    id = models.AutoField(primary_key=True, db_column='users_id')
-    name = models.CharField(max_length=100, blank=True)
+    id = models.AutoField(primary_key=True, db_column='user_id')
+    username = models.CharField(max_length=100, blank=True)
     first_name = models.CharField(max_length=100, blank=True)
     last_name = models.CharField(max_length=100, blank=True)
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=100)
-    phone_number = models.CharField(max_length=20, blank=True)
-    address = models.ForeignKey(Address, null=True, blank=True, on_delete=models.SET_NULL)
+    address = models.ForeignKey(Address, null=True, blank=True,db_column='address', on_delete=models.CASCADE)
     phone = models.CharField(max_length=20, blank=True)
     role = models.CharField(max_length=50,default='customer')
     class Meta:
@@ -63,25 +70,23 @@ class User(models.Model):
         db_table = 'user'
 
 class ShoppingCart(models.Model):
-    id = models.AutoField(primary_key=True, db_column='shoppingcart_id')
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
+    id = models.AutoField(primary_key=True, db_column='cart_id')
+    user = models.ForeignKey(User,db_column='user_id',on_delete=models.CASCADE)
     updated_at = models.DateTimeField(auto_now=True)
     class Meta:
         managed = False
         db_table = 'shopping_cart'
 
 class CartItem(models.Model):
-    id = models.AutoField(primary_key=True, db_column='cartitem_id')
+    id = models.AutoField(primary_key=True, db_column='cart_item_id')
     cart = models.ForeignKey(ShoppingCart, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    quantity = models.IntegerField()
     class Meta:
         managed = False
-        db_table = 'cartitem'
+        db_table = 'cart_item'
 
 class OrderStatus(models.Model):
-    id = models.AutoField(primary_key=True, db_column='orderstatus_id')
+    id = models.AutoField(primary_key=True, db_column='status_id')
     status_name = models.CharField(max_length=50)
     class Meta:
         managed = False
@@ -89,29 +94,34 @@ class OrderStatus(models.Model):
 
 class Order(models.Model):
     id = models.AutoField(primary_key=True, db_column='order_id')
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User,db_column='user_id', on_delete=models.CASCADE)
     order_date = models.DateTimeField(auto_now_add=True)
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
     order_status = models.ForeignKey(OrderStatus, on_delete=models.CASCADE)
     tracking_number = models.CharField(max_length=100, blank=True)
-    shipping_address = models.ForeignKey(Address, null=True, blank=True, on_delete=models.SET_NULL)
+    shipping_address = models.ForeignKey(Address,db_column='shipping_address_id',null=True, blank=True, on_delete=models.CASCADE)
     class Meta:
         managed = False
         db_table = 'order'
 
 class OrderItem(models.Model):
-    id = models.AutoField(primary_key=True, db_column='orderitem_id')
+    id = models.AutoField(primary_key=True, db_column='order_item_id')
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, null=True, on_delete=models.CASCADE)
     quantity = models.IntegerField()
     price_per_unit = models.DecimalField(max_digits=10, decimal_places=2)
-    subtotal = models.DecimalField(max_digits=10, decimal_places=2)
+    
+    # Is calculated from quantity and price_per_unit
+    @property
+    def subtotal(self):
+        return self.quantity * self.price_per_unit
+    
     class Meta:
         managed = False
         db_table = 'order_item'
 
 class PaymentStatus(models.Model):
-    id = models.AutoField(primary_key=True, db_column='paymentstatus_id')
+    id = models.AutoField(primary_key=True, db_column='payment_status_id')
     status_name = models.CharField(max_length=50)
     class Meta:
         managed = False

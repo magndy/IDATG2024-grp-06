@@ -65,10 +65,16 @@ class OrderSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+# Calculates subtotal
 class OrderItemSerializer(serializers.ModelSerializer):
+    subtotal = serializers.SerializerMethodField()
+
     class Meta:
         model = OrderItem
-        fields = '__all__'
+        fields = ['id', 'order', 'product', 'quantity', 'price_per_unit', 'subtotal']
+
+    def get_subtotal(self, obj):
+        return obj.subtotal
 
 
 class PaymentStatusSerializer(serializers.ModelSerializer):

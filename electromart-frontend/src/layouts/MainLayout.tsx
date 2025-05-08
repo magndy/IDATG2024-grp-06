@@ -1,13 +1,16 @@
 // src/layouts/MainLayout.tsx
-import React, { useState } from "react";
-import { Link } from "react-router-dom"; // Import Link for navigation
-import { Category, CategoryNode, mockCategories } from "../data/mockData"; // Adjust path if needed
+import React, { useState, useEffect } from "react"; // Import useState AND useEffect
+import { Link } from "react-router-dom";
+import { Category, CategoryNode } from "../data/mockData"; // Keep type imports
+import { useCart } from "../hooks/useCart";
+import { FaShoppingCart } from "react-icons/fa";
 
-// Define the type for the component props, including 'children'
+// Define the type for the component props (remains the same)
 type MainLayoutProps = {
-  children: React.ReactNode; // 'children' represents the content to be rendered inside the layout
+  children: React.ReactNode;
 };
 
+// Keep buildCategoryTree function (it operates on the data once fetched)
 function buildCategoryTree(
   categories: Category[],
   parentId: number | null = null
@@ -16,153 +19,185 @@ function buildCategoryTree(
     .filter((category) => category.parentId === parentId)
     .map((category) => ({
       ...category,
-      // Recursively find children for the current category
       children: buildCategoryTree(categories, category.id),
     }));
 }
 
 // Define the MainLayout component
 const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
-  // State to control the main category dropdown visibility
+  // --- State for fetched data and UI ---
+  const [categoryTree, setCategoryTree] = useState<CategoryNode[]>([]); // Holds nested tree
+  const [isLoadingCategories, setIsLoadingCategories] = useState<boolean>(true); // Loading state
+  const [categoryError, setCategoryError] = useState<string | null>(null); // Error state
+
+  // State for dropdown interaction (remains the same)
   const [isCategoryMenuOpen, setCategoryMenuOpen] = useState(false);
-  // State to track which category's submenu is open (using its ID)
   const [openSubMenuId, setOpenSubMenuId] = useState<number | null>(null);
 
-  // Build the hierarchical category tree from mock data
-  const categoryTree = buildCategoryTree(mockCategories);
+  // --- useEffect to fetch categories ---
+  useEffect(() => {
+    const fetchCategories = async () => {
+      setIsLoadingCategories(true); // Start loading
+      setCategoryError(null);     // Reset error
+      try {
+        const response = await fetch('/mock-data/categories.json'); // Fetch from public folder
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data: Category[] = await response.json();
+
+        // Build the tree *after* fetching and setting the flat list
+        const tree = buildCategoryTree(data);
+        setCategoryTree(tree); // Store the nested tree
+
+      } catch (e) {
+        console.error("Failed to fetch categories:", e);
+        setCategoryError(e instanceof Error ? e.message : 'Failed to load categories');
+        setCategoryTree([]); // Clear tree on error
+      } finally {
+        setIsLoadingCategories(false); // Stop loading regardless of success/error
+      }
+    };
+
+    fetchCategories();
+  }, []); // Empty dependency array `[]` means this runs only once when the component mounts
+
+  const { getItemCount } = useCart();
+  const itemCount = getItemCount();
+
   return (
     <div className="min-h-screen flex flex-col">
-      {" "}
-      {/* Ensure layout takes full height */}
-      {/* 1. Navigation Section (Moved from App.tsx) */}
+      {/* Navigation Section */}
       <nav className="bg-gray-800 text-white p-4 shadow-md sticky top-0 z-10">
-        {" "}
-        {/* Made nav sticky */}
-        {/* Inside the <nav> tag... */}
         <ul className="flex space-x-6 container mx-auto">
-          {/* Home Link (Stays the same) */}
+          {/* Home Link */}
           <li>
-            <Link
-              to="/"
-              className="hover:text-gray-300 transition duration-200"
-            >
+            <Link to="/" className="hover:text-gray-300 transition duration-200">
               Home
             </Link>
           </li>
 
-          {/* --- Start Products Dropdown Item --- */}
+          {/* Products Dropdown Item */}
           <li
-            className="relative" // Parent is relative for dropdown positioning
-            // *** Hover handlers now on the "Products" li ***
-            onMouseEnter={() => setCategoryMenuOpen(true)} // Open dropdown on enter
+            className="relative"
+            onMouseEnter={() => setCategoryMenuOpen(true)}
             onMouseLeave={() => {
-              // Close dropdown on leave
               setCategoryMenuOpen(false);
-              setOpenSubMenuId(null); // Close submenus too
+              setOpenSubMenuId(null);
             }}
           >
-            {/* The main link to see ALL products */}
+            {/* Products Link */}
             <Link
               to="/products"
               className="hover:text-gray-300 transition duration-200 focus:outline-none"
-              aria-haspopup="true" // Indicate interaction
-              aria-expanded={isCategoryMenuOpen} // Indicate dropdown state (accessibility)
+              aria-haspopup="true"
+              aria-expanded={isCategoryMenuOpen}
             >
               Products
             </Link>
 
-            {/* --- Category Dropdown Menu (Moved Here) --- */}
+            {/* Category Dropdown Menu */}
             {isCategoryMenuOpen && (
-              <div
-                className="absolute left-0 top-full w-56 bg-white rounded-md shadow-xl z-20 py-1" // Position below "Products"
-                // No handlers needed here for main visibility
-              >
-                {/* Map over TOP-LEVEL categories */}
-                {categoryTree.map((category) => (
-                  <div
-                    key={category.id}
-                    className="relative group" // For submenu hover
-                    onMouseEnter={() => {
-                      // Submenu open logic
-                      if (category.children.length > 0) {
-                        setOpenSubMenuId(category.id);
-                      } else {
-                        setOpenSubMenuId(null);
-                      }
-                    }}
-                  >
-                    {/* Link for the specific category */}
-                    <Link
-                      to={`/category/${category.id}`} // Link to category-specific page
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-500 hover:text-white w-full text-left"
-                      onClick={() => setCategoryMenuOpen(false)} // Close menu on click
+              <div className="absolute left-0 top-full w-56 bg-white rounded-md shadow-xl z-20 py-1">
+                {/* --- Conditional Rendering for Loading/Error/Data --- */}
+                {isLoadingCategories ? (
+                  <div className="px-4 py-2 text-sm text-gray-500">Loading categories...</div>
+                ) : categoryError ? (
+                  <div className="px-4 py-2 text-sm text-red-600">Error: {categoryError}</div>
+                ) : categoryTree.length === 0 ? (
+                    <div className="px-4 py-2 text-sm text-gray-500">No categories found.</div>
+                ) : (
+                  // Map over the categoryTree *STATE* variable
+                  categoryTree.map((category) => (
+                    <div
+                      key={category.id}
+                      className="relative group"
+                      onMouseEnter={() => {
+                        if (category.children.length > 0) {
+                          setOpenSubMenuId(category.id);
+                        } else {
+                          setOpenSubMenuId(null);
+                        }
+                      }}
                     >
-                      {category.name}
-                      {category.children.length > 0 && (
-                        <span className="float-right">&raquo;</span>
-                      )}
-                    </Link>
+                      {/* Link for the category */}
+                      <Link
+                        to={`/category/${category.id}`}
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-500 hover:text-white w-full text-left"
+                        onClick={() => setCategoryMenuOpen(false)}
+                      >
+                        {category.name}
+                        {category.children.length > 0 && (
+                          <span className="float-right">&raquo;</span>
+                        )}
+                      </Link>
 
-                    {/* --- Submenu --- */}
-                    {category.children.length > 0 &&
-                      openSubMenuId === category.id && (
-                        <div
-                          className="absolute left-full top-0 mt-0 ml-px w-56 bg-white rounded-md shadow-xl z-30 py-1"
-                          onMouseLeave={() => setOpenSubMenuId(null)} // Close submenu
-                        >
-                          {/* Map over CHILDREN categories */}
-                          {category.children.map((childCategory) => (
-                            <Link
-                              key={childCategory.id}
-                              to={`/category/${childCategory.id}`} // Link to sub-category page
-                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-500 hover:text-white w-full text-left"
-                              onClick={() => {
-                                // Close all menus on click
-                                setCategoryMenuOpen(false);
-                                setOpenSubMenuId(null);
-                              }}
-                            >
-                              {childCategory.name}
-                            </Link>
-                          ))}
-                        </div>
-                      )}
-                  </div>
-                ))}
-                {/* Optional: Add a direct link to "All Products" within the dropdown too? */}
-                {/* <hr className="my-1 border-gray-200" />
-             <Link
-                 to="/products"
-                 className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-500 hover:text-white w-full text-left font-semibold"
-                 onClick={() => setCategoryMenuOpen(false)}
-             >
-                 View All Products
-             </Link> */}
+                      {/* Submenu */}
+                      {category.children.length > 0 &&
+                        openSubMenuId === category.id && (
+                          <div
+                            className="absolute left-full top-0 mt-0 ml-px w-56 bg-white rounded-md shadow-xl z-30 py-1"
+                            onMouseLeave={() => setOpenSubMenuId(null)}
+                          >
+                            {category.children.map((childCategory) => (
+                              <Link
+                                key={childCategory.id}
+                                to={`/category/${childCategory.id}`}
+                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-500 hover:text-white w-full text-left"
+                                onClick={() => {
+                                  setCategoryMenuOpen(false);
+                                  setOpenSubMenuId(null);
+                                }}
+                              >
+                                {childCategory.name}
+                              </Link>
+                            ))}
+                          </div>
+                        )}
+                    </div>
+                  ))
+                )}
+                {/* --- End Conditional Rendering --- */}
               </div>
             )}
           </li>
-          {/* --- End Products Dropdown Item --- */}
+          {/* End Products Dropdown Item */}
 
-          {/* The separate "Categories" <li> is now completely removed */}
+          {/* Spacer element to push cart to the right */}
+          <li className="flex-grow"></li> {/* This pushes following items to the end */}
 
-          {/* Add more links later (e.g., Cart, Login) */}
+          {/* --- Cart Link/Icon --- */}
+          <li className="relative"> {/* Use relative for positioning the badge */}
+            <Link
+                to="/cart" // Link to the future cart page
+                className="hover:text-gray-300 transition duration-200 p-2 flex items-center" // Added padding and flex
+            >
+              <FaShoppingCart size={20} /> {/* The cart icon */}
+
+              {/* Badge: Show only if itemCount > 0 */}
+              {itemCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                  {itemCount} {/* Display the count */}
+                </span>
+              )}
+            </Link>
+          </li>
+          {/* --- End Cart Link/Icon --- */}
+
+          {/* You might add Login/Register links after the cart later */}
+          
         </ul>
-        {/* End of <ul> */}
       </nav>
-      {/* 2. Page Content Section */}
-      {/* 'children' will render the actual page component (e.g., HomePage, ProductListPage) here */}
-      {/* 'flex-grow' makes this section take up available space */}
+
+      {/* Page Content */}
       <main className="container mx-auto p-4 flex-grow">{children}</main>
-      {/* 3. Optional Footer (Moved from App.tsx comment) */}
+
+      {/* Footer */}
       <footer className="bg-gray-200 p-4 mt-auto text-center text-sm text-gray-600">
-        {" "}
-        {/* mt-auto pushes footer down */}© {new Date().getFullYear()}{" "}
-        ElectroMart - Gjøvik, Norway
-        {/* Used current year and added location context */}
+        © {new Date().getFullYear()} ElectroMart - Gjøvik, Norway
       </footer>
     </div>
   );
 };
 
-// Export the component
 export default MainLayout;

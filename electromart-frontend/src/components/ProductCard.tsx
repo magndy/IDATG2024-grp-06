@@ -2,6 +2,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Product } from "../data/mockData";
+import { useCart } from "../hooks/useCart";
 
 interface ProductCardProps {
   product: Product;
@@ -14,6 +15,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 }) => {
   // <-- Destructure prop
 
+  const { addToCart } = useCart();
   // Use the passed-in prop or the fallback
   const imageUrl =
     displayImageUrl ||
@@ -22,7 +24,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   const handleAddToCart = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
     event.preventDefault();
-    alert(`Added ${product.name} to cart! (ID: ${product.id})`);
+    addToCart(product);
   };
 
   return (
@@ -35,7 +37,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
         <img
           src={imageUrl} // <-- Use the final imageUrl variable
           alt={product.name}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-contain"
         />
       </div>
 
@@ -67,7 +69,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
         {/* Price and Button */}
         <div className="mt-auto flex items-center justify-between">
           <span className="text-xl font-bold text-gray-900">
-            NOK {product.price.toFixed(2)}
+            USD {product.price.toFixed(2)}
           </span>
           <button
             onClick={handleAddToCart}

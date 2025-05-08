@@ -1,0 +1,23 @@
+[
+    { "id": 1, "name": "Computers", "parentId": null },
+    { "id": 2, "name": "Mobile Devices", "parentId": null },
+    { "id": 3, "name": "Cameras", "parentId": null },
+    { "id": 4, "name": "Home Appliances", "parentId": null },
+    { "id": 5, "name": "Accessories", "parentId": null },
+  
+    { "id": 6, "name": "Laptops", "parentId": 1 },
+    { "id": 7, "name": "Desktops", "parentId": 1 },
+    { "id": 8, "name": "Tablets", "parentId": 1 },
+  
+    { "id": 9, "name": "Smartphones", "parentId": 2 },
+    { "id": 10, "name": "Smartwatches", "parentId": 2 },
+    { "id": 11, "name": "Tablets", "parentId": 2 },
+  
+    { "id": 12, "name": "Keyboards", "parentId": 5 },
+    { "id": 13, "name": "Mice", "parentId": 5 },
+    { "id": 14, "name": "Headphones", "parentId": 5 },
+    { "id": 17, "name": "Microphones", "parentId": 5},
+  
+    { "id": 15, "name": "Gaming Laptops", "parentId": 6 },
+    { "id": 16, "name": "Business Laptops", "parentId": 6 }
+  ]

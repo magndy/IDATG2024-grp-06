@@ -1,10 +1,12 @@
 // src/layouts/MainLayout.tsx
-import React, { useState, useEffect } from "react"; // Import useState AND useEffect
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Category, CategoryNode } from "../data/mockData"; // Keep type imports
 import { useCart } from "../hooks/useCart";
 import { useAuth } from "../hooks/useAuth";
 import { FaShoppingCart, FaUserCircle } from "react-icons/fa";
+// --- Step 1: Import the service function ---
+import { fetchCategories as fetchCategoriesAPI } from "../services/apiService"; // Adjusted path
 
 // Define the type for the component props (remains the same)
 type MainLayoutProps = {
@@ -27,27 +29,26 @@ function buildCategoryTree(
 // Define the MainLayout component
 const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   // --- State for fetched data and UI ---
-  const [categoryTree, setCategoryTree] = useState<CategoryNode[]>([]); // Holds nested tree
-  const [isLoadingCategories, setIsLoadingCategories] = useState<boolean>(true); // Loading state
-  const [categoryError, setCategoryError] = useState<string | null>(null); // Error state
+  const [categoryTree, setCategoryTree] = useState<CategoryNode[]>([]);
+  const [isLoadingCategories, setIsLoadingCategories] = useState<boolean>(true);
+  const [categoryError, setCategoryError] = useState<string | null>(null);
 
   // State for dropdown interaction (remains the same)
   const [isCategoryMenuOpen, setCategoryMenuOpen] = useState(false);
   const [openSubMenuId, setOpenSubMenuId] = useState<number | null>(null);
 
-  // --- useEffect to fetch categories ---
+  // --- Step 2: useEffect to fetch categories using the service ---
   useEffect(() => {
-    const fetchCategories = async () => {
-      setIsLoadingCategories(true); // Start loading
-      setCategoryError(null); // Reset error
+    // Renamed the inner async function to avoid conflict and for clarity
+    const loadCategories = async () => {
+      setIsLoadingCategories(true);
+      setCategoryError(null);
       try {
-        const response = await fetch("/mock-data/categories.json"); // Fetch from public folder
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data: Category[] = await response.json();
+        // --- MODIFIED: Call the imported service function ---
+        const data: Category[] = await fetchCategoriesAPI();
+        // --- END MODIFICATION ---
 
-        // Build the tree *after* fetching and setting the flat list
+        // Build the tree *after* fetching
         const tree = buildCategoryTree(data);
         setCategoryTree(tree); // Store the nested tree
       } catch (e) {
@@ -57,11 +58,11 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         );
         setCategoryTree([]); // Clear tree on error
       } finally {
-        setIsLoadingCategories(false); // Stop loading regardless of success/error
+        setIsLoadingCategories(false);
       }
     };
 
-    fetchCategories();
+    loadCategories();
   }, []); // Empty dependency array `[]` means this runs only once when the component mounts
 
   const { getItemCount } = useCart();
@@ -72,7 +73,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
     <div className="min-h-screen flex flex-col">
       {/* Navigation Section */}
       <nav className="bg-gray-800 text-white p-4 shadow-md sticky top-0 z-10">
-        <ul className="flex space-x-6 container mx-auto">
+        <ul className="flex space-x-4 md:space-x-6 container mx-auto items-center"> {/* Adjusted space-x for responsiveness */}
           {/* Home Link */}
           <li>
             <Link
@@ -104,7 +105,6 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
             {/* Category Dropdown Menu */}
             {isCategoryMenuOpen && (
               <div className="absolute left-0 top-full w-56 bg-white rounded-md shadow-xl z-20 py-1">
-                {/* --- Conditional Rendering for Loading/Error/Data --- */}
                 {isLoadingCategories ? (
                   <div className="px-4 py-2 text-sm text-gray-500">
                     Loading categories...
@@ -118,7 +118,6 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
                     No categories found.
                   </div>
                 ) : (
-                  // Map over the categoryTree *STATE* variable
                   categoryTree.map((category) => (
                     <div
                       key={category.id}
@@ -131,7 +130,6 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
                         }
                       }}
                     >
-                      {/* Link for the category */}
                       <Link
                         to={`/category/${category.id}`}
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-500 hover:text-white w-full text-left"
@@ -142,8 +140,6 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
                           <span className="float-right">&raquo;</span>
                         )}
                       </Link>
-
-                      {/* Submenu */}
                       {category.children.length > 0 &&
                         openSubMenuId === category.id && (
                           <div
@@ -168,26 +164,21 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
                     </div>
                   ))
                 )}
-                {/* --- End Conditional Rendering --- */}
               </div>
             )}
           </li>
-          {/* End Products Dropdown Item */}
-          {/* Spacer element to push cart to the right */}
-          <li className="flex-grow"></li>{" "}
-          {/* This pushes following items to the end */}
-          {/* --- Conditional Auth Links/Info --- */}
+          {/* Spacer element */}
+          <li className="flex-grow"></li>
+          {/* Conditional Auth Links/Info */}
           {currentUser ? (
-            // --- Logged IN View ---
             <>
               <li className="flex items-center text-sm text-gray-300">
-                <FaUserCircle className="mr-1" /> {/* User Icon */}
-                {/* Display name if available, otherwise email */}
+                <FaUserCircle className="mr-1" />
                 Welcome, {currentUser.name || currentUser.email}
               </li>
               <li>
                 <button
-                  onClick={logout} // Call logout function from context
+                  onClick={logout}
                   className="hover:text-gray-300 transition duration-200 px-2 py-1 text-sm"
                 >
                   Logout
@@ -195,7 +186,6 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
               </li>
             </>
           ) : (
-            // --- Logged OUT View ---
             <>
               <li>
                 <Link
@@ -215,26 +205,20 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
               </li>
             </>
           )}
-          {/* --- End Conditional Auth Links --- */}
-          {/* --- Cart Link/Icon --- */}
-          <li className="relative">
-            {" "}
-            {/* Use relative for positioning the badge */}
+          {/* Cart Link/Icon */}
+          <li className="relative ml-2">
             <Link
-              to="/cart" // Link to the future cart page
-              className="hover:text-gray-300 transition duration-200 p-2 flex items-center" // Added padding and flex
+              to="/cart"
+              className="hover:text-gray-300 transition duration-200 p-2 flex items-center"
             >
-              <FaShoppingCart size={20} /> {/* The cart icon */}
-              {/* Badge: Show only if itemCount > 0 */}
+              <FaShoppingCart size={20} />
               {itemCount > 0 && (
                 <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                  {itemCount} {/* Display the count */}
+                  {itemCount}
                 </span>
               )}
             </Link>
           </li>
-          {/* --- End Cart Link/Icon --- */}
-          {/* You might add Login/Register links after the cart later */}
         </ul>
       </nav>
 

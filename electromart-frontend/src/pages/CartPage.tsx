@@ -1,7 +1,9 @@
-import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { useCart } from "../hooks/useCart";
-import { ProductImage } from "../data/mockData";
+// src/pages/CartPage.tsx
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { useCart } from '../hooks/useCart';
+import { ProductImage } from '../data/mockData'; // Import type
+import { fetchProductImages } from '../services/apiService'; // Import service function
 
 const CartPage = () => {
   const { cartItems, removeFromCart, updateQuantity, clearCart, getCartTotal } =
@@ -12,15 +14,12 @@ const CartPage = () => {
   const [imageError, setImageError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchImages = async () => {
+    const loadImages = async () => { // Renamed inner function
       setIsLoadingImages(true);
       setImageError(null);
       try {
-        const response = await fetch("/mock-data/productImages.json");
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data: ProductImage[] = await response.json();
+        // Call the imported service function
+        const data: ProductImage[] = await fetchProductImages();
         setProductImages(data);
       } catch (e) {
         console.error("Failed to fetch product images for cart:", e);
@@ -30,8 +29,8 @@ const CartPage = () => {
       }
     };
 
-    fetchImages();
-  }, []);
+    loadImages();
+  }, []); // Empty dependency array - fetch images only once on mount
 
   if (cartItems.length === 0) {
     return (
@@ -63,20 +62,15 @@ const CartPage = () => {
     );
   }
 
-  // Handle Image Loading State
   if (isLoadingImages) {
-    // You might want a more integrated loading state later,
-    // but this shows a message while images load.
     return <div className="text-center p-10">Loading cart images...</div>;
   }
 
-  // Handle Image Error State
-  if (imageError) {
-    // Display error related to images, but still show cart items below
-    // Or you could return a more prominent error message here
-    console.error("Image loading error:", imageError); // Keep logging
-    // Optionally display a less intrusive error message within the cart later
-  }
+  // Optional: Display a less intrusive warning for image errors, 
+  // allowing the cart to still be functional.
+  // if (imageError) {
+  //   return <div className="text-center p-10 text-red-600">Error loading images: {imageError}</div>;
+  // }
 
   return (
     <div className="container mx-auto mt-10">
@@ -86,6 +80,7 @@ const CartPage = () => {
             <h1 className="font-semibold text-2xl">Shopping Cart</h1>
             <h2 className="font-semibold text-2xl">{cartItems.length} Items</h2>
           </div>
+          {imageError && <div className="my-4 text-sm text-red-500 text-center">Warning: Could not load product images ({imageError}). Using fallbacks.</div>}
           <div className="flex mt-10">
             <h3 className="font-semibold text-gray-600 text-xs uppercase w-2/5">
               Product Details
@@ -162,10 +157,10 @@ const CartPage = () => {
                 </div>
 
                 <span className="text-center w-1/5 font-semibold text-sm">
-                  ${item.price}
+                  USD {item.price.toFixed(2)}
                 </span>
                 <span className="text-center w-1/5 font-semibold text-sm">
-                  ${(item.price * item.quantity).toFixed(2)}
+                  USD {(item.price * item.quantity).toFixed(2)}
                 </span>
               </div>
             );
@@ -192,7 +187,7 @@ const CartPage = () => {
           <div className="mt-8">
             <div className="flex font-semibold justify-between py-6 text-sm uppercase">
               <span>Total cost</span>
-              <span>${getCartTotal().toFixed(2)}</span>
+              <span>USD {getCartTotal().toFixed(2)}</span>
             </div>
             <Link to="/checkout">
               <button className="bg-indigo-500 hover:bg-indigo-700 font-semibold py-3 text-sm text-white uppercase w-full">

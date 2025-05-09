@@ -1,14 +1,18 @@
 // src/pages/ProductListPage.tsx
-import React, { useState, useEffect } from "react"; // Import hooks
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-// --- Import only TYPES from mockData ---
 import {
   Product,
   Category,
   ProductImage,
-  // Removed mock arrays (mockProducts, mockCategories, mockProductImages)
-} from "../data/mockData";
+} from "../data/mockData"; // Types are still fine
 import ProductCard from "../components/ProductCard";
+// --- Step 1: Import the service functions ---
+import {
+  fetchProducts,
+  fetchCategories,
+  fetchProductImages,
+} from "../services/apiService"; // Adjust path if needed
 
 // Keep this helper function (it will operate on fetched category data)
 function getAllDescendantIds(
@@ -29,52 +33,36 @@ function getAllDescendantIds(
 const ProductListPage: React.FC = () => {
   const { categoryId: categoryIdParam } = useParams<{ categoryId?: string }>();
 
-  // --- State Variables ---
-  const [allProductImages, setAllProductImages] = useState<ProductImage[]>([]); // To store all fetched images
-  const [displayedProducts, setDisplayedProducts] = useState<Product[]>([]); // Products filtered for display
-  const [pageTitle, setPageTitle] = useState<string>("Our Products"); // Page title
-  const [isLoading, setIsLoading] = useState<boolean>(true); // Loading state
-  const [error, setError] = useState<string | null>(null); // Error state
+  // --- State Variables (remain the same) ---
+  const [allProductImages, setAllProductImages] = useState<ProductImage[]>([]);
+  const [displayedProducts, setDisplayedProducts] = useState<Product[]>([]);
+  const [pageTitle, setPageTitle] = useState<string>("Our Products");
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // --- useEffect to Fetch Data and Filter ---
+  // --- Step 2: useEffect to Fetch Data and Filter using service functions ---
   useEffect(() => {
     const loadAndFilterData = async () => {
       setIsLoading(true);
       setError(null);
       try {
-        // Fetch all necessary data concurrently
-        const [productsResponse, categoriesResponse, imagesResponse] =
-          await Promise.all([
-            fetch("/mock-data/products.json"),
-            fetch("/mock-data/categories.json"),
-            fetch("/mock-data/productImages.json"), // Also fetch images here
-          ]);
+        // --- MODIFIED: Fetch all necessary data concurrently using service functions ---
+        const [productsData, categoriesData, imagesData] = await Promise.all([
+          fetchProducts(),
+          fetchCategories(),
+          fetchProductImages(),
+        ]);
+        // --- END MODIFICATION ---
 
-        // Check responses
-        if (!productsResponse.ok)
-          throw new Error(
-            `Failed to load products: ${productsResponse.statusText}`
-          );
-        if (!categoriesResponse.ok)
-          throw new Error(
-            `Failed to load categories: ${categoriesResponse.statusText}`
-          );
-        if (!imagesResponse.ok)
-          throw new Error(
-            `Failed to load images: ${imagesResponse.statusText}`
-          );
+        // --- REMOVED: Individual response.ok checks and .json() calls ---
+        // These are now handled by the service functions.
 
-        // Parse JSON data
-        const productsData: Product[] = await productsResponse.json();
-        const categoriesData: Category[] = await categoriesResponse.json();
-        const imagesData: ProductImage[] = await imagesResponse.json();
+        // Store the full fetched list for product images (still needed for ProductCard)
+        setAllProductImages(imagesData);
 
-        // Store the full fetched lists in state
-        setAllProductImages(imagesData); // Store images
-
-        // --- Perform Filtering ---
+        // --- Perform Filtering (logic remains the same, using fetched data) ---
         let currentTitle = "Our Products";
-        let productsToDisplay = productsData; // Start with all products
+        let productsToDisplay = productsData;
 
         if (categoryIdParam) {
           const categoryId = parseInt(categoryIdParam, 10);
@@ -82,60 +70,52 @@ const ProductListPage: React.FC = () => {
             const category = categoriesData.find(
               (cat) => cat.id === categoryId
             );
-            currentTitle = category ? category.name : "Category Products"; // Update title
+            currentTitle = category ? category.name : "Category Products";
 
             const categoryIdsToShow = getAllDescendantIds(
               categoryId,
-              categoriesData
+              categoriesData // Use fetched categoriesData
             );
-            productsToDisplay = productsData.filter((product) =>
+            productsToDisplay = productsData.filter((product) => // Use fetched productsData
               categoryIdsToShow.has(product.categoryId)
             );
           } else {
-            // Handle case where categoryIdParam is not a valid number if necessary
             setError(`Invalid category ID: ${categoryIdParam}`);
-            productsToDisplay = []; // Show no products for invalid category
+            productsToDisplay = [];
             currentTitle = "Invalid Category";
           }
         }
 
-        // Set the final state for rendering
         setDisplayedProducts(productsToDisplay);
         setPageTitle(currentTitle);
       } catch (e) {
         console.error("Failed to load page data:", e);
         setError(e instanceof Error ? e.message : "Failed to load data");
-        setDisplayedProducts([]); // Clear products on error
+        setDisplayedProducts([]);
       } finally {
-        setIsLoading(false); // Done loading
+        setIsLoading(false);
       }
     };
 
     loadAndFilterData();
-  }, [categoryIdParam]); // Re-run when the URL parameter changes
+  }, [categoryIdParam]);
 
-  // --- Render Logic ---
-
-  // Handle Loading State
+  // --- Render Logic (remains the same) ---
   if (isLoading) {
     return <div className="text-center p-10">Loading products...</div>;
   }
 
-  // Handle Error State
   if (error) {
     return <div className="text-center p-10 text-red-600">Error: {error}</div>;
   }
 
-  // Render Product Grid
   return (
     <div>
       <h1 className="text-3xl font-bold mb-8 text-gray-800">{pageTitle}</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {displayedProducts.length > 0 ? (
           displayedProducts.map((product) => {
-            // --- Find image URL using data from STATE ---
             const productImage = allProductImages.find(
-              // Search the state variable
               (img: ProductImage) =>
                 img.productId.toString() === product.id.toString()
             );
@@ -145,7 +125,7 @@ const ProductListPage: React.FC = () => {
               <ProductCard
                 key={product.id}
                 product={product}
-                displayImageUrl={imageUrlForCard} // Pass URL to card
+                displayImageUrl={imageUrlForCard}
               />
             );
           })

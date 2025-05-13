@@ -13,8 +13,7 @@ const OrderConfirmationPage: React.FC = () => {
           Your order has been placed successfully.
         </p>
         <p className="text-sm text-gray-500 mb-6">
-          (In a real application, you might show an order summary or tracking
-          information here).
+          Order summary
         </p>
         <Link
           to="/products" // Link back to products or home page

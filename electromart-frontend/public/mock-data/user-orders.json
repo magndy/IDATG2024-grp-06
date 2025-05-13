@@ -1,0 +1,42 @@
+[
+    {
+      "order_id": "12345",
+      "user_id": 1,
+      "order_date": "2025-04-28",
+      "total_amount": 1799.80,
+      "order_status_id": 3,
+      "tracking_number": "TRKXYZ789012",
+      "shipping_address_id": 101,
+      "itemCount": 2
+    },
+    {
+      "order_id": "12366",
+      "user_id": 1,
+      "order_date": "2025-05-02",
+      "total_amount": 89.00,
+      "order_status_id": 2,
+      "tracking_number": null,
+      "shipping_address_id": 101,
+      "itemCount": 1
+    },
+    {
+      "order_id": "12370",
+      "user_id": 1,
+      "order_date": "2025-05-05",
+      "total_amount": 749.00,
+      "order_status_id": 1,
+      "tracking_number": "TRKABC555000",
+      "shipping_address_id": 102,
+      "itemCount": 1
+    },
+    {
+      "order_id": "00001",
+      "user_id": null,
+      "order_date": "2025-05-06",
+      "total_amount": 349.50,
+      "order_status_id": 1,
+      "tracking_number": null,
+      "shipping_address_id": 201,
+      "itemCount": 1
+    }
+  ]

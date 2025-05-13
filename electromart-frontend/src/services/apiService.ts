@@ -1,5 +1,5 @@
 // src/services/apiService.ts
-import { Product, Category, ProductImage, Brand } from '../data/mockData'; // Import your types
+import { Product, Category, ProductImage, Brand, OrderFromDB } from '../data/mockData'; // Import your types
 
 const BASE_URL = '/mock-data'; // Base path for your mock JSON files in the /public folder
 
@@ -38,6 +38,12 @@ export const fetchBrands = async (): Promise<Brand[]> => {
   const response = await fetch(`${BASE_URL}/brands.json`);
   return handleResponse<Brand[]>(response);
 };
+
+// Fetches user orders (mocked)
+export const fetchUserOrders = async (): Promise<OrderFromDB[]> => {
+    const response = await fetch(`${BASE_URL}/user-orders.json`); // Path to your new JSON file
+    return handleResponse<OrderFromDB[]>(response);
+  };
 
 /*
 // Example for future real API functions:

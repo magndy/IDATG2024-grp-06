@@ -72,7 +72,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Navigation Section */}
-      <nav className="bg-gray-800 text-white p-4 shadow-md sticky top-0 z-10">
+      <nav className="bg-gray-800 text-white p-4 shadow-md sticky top-0 z-15">
         <ul className="flex space-x-4 md:space-x-6 container mx-auto items-center"> {/* Adjusted space-x for responsiveness */}
           {/* Home Link */}
           <li>
@@ -171,21 +171,32 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           <li className="flex-grow"></li>
           {/* Conditional Auth Links/Info */}
           {currentUser ? (
-            <>
-              <li className="flex items-center text-sm text-gray-300">
-                <FaUserCircle className="mr-1" />
-                Welcome, {currentUser.name || currentUser.email}
-              </li>
-              <li>
-                <button
-                  onClick={logout}
-                  className="hover:text-gray-300 transition duration-200 px-2 py-1 text-sm"
-                >
-                  Logout
-                </button>
-              </li>
-            </>
-          ) : (
+        // --- Logged IN View ---
+        <>
+          <li className="flex items-center text-sm text-gray-300">
+            <FaUserCircle className="mr-1" />
+            Welcome, {currentUser.name || currentUser.email}
+          </li>
+          {/* --- ADDED MY ORDERS LINK --- */}
+          <li>
+            <Link
+              to="/my-orders"
+              className="hover:text-gray-300 transition duration-200 text-sm px-2 py-1" // Added padding to match button
+            >
+              My Orders
+            </Link>
+          </li>
+          {/* --- END ADDED MY ORDERS LINK --- */}
+          <li>
+            <button
+              onClick={logout}
+              className="hover:text-gray-300 transition duration-200 px-2 py-1 text-sm"
+            >
+              Logout
+            </button>
+          </li>
+        </>
+      ) : (
             <>
               <li>
                 <Link

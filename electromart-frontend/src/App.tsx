@@ -9,6 +9,7 @@ import CheckoutPage from "./pages/CheckoutPage";
 import OrderConfirmationPage from "./pages/OrderConfirmationPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
+import MyOrdersPage from "./pages/MyOrdersPage";
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
         <Route path="/order-confirmation" element={<OrderConfirmationPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/my-orders" element={<MyOrdersPage />} />
 
         {/* Catch-all route - Note: Link is removed as it's now in MainLayout */}
         <Route

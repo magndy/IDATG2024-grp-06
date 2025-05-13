@@ -1,0 +1,117 @@
+[
+    {
+      "id": 1001,
+      "productId": 1,
+      "imageUrl": "https://cdn-dynmedia-1.microsoft.com/is/image/microsoftcorp/FL2C-A-BB-01?qlt=90&wid=1253&hei=705&extendN=0.12,0.12,0.12,0.12&bgc=FFFFFFFF&fmt=jpg",
+      "altText": "Laptop Pro front view"
+    },
+    {
+      "id": 1002,
+      "productId": 1,
+      "imageUrl": "https://i5.walmartimages.com/seo/HP-15-6-Screen-FHD-Laptop-Computer-AMD-Ryzen-5-5500U-8GB-RAM-256GB-SSD-Spruce-Blue-Windows-11-Home-15-ef2729wm_8dee5689-db47-45ac-9a0d-5399c95a8ee0.ad15a381ad98aa369a68bfb1527d66a9.jpeg",
+      "altText": "Laptop Pro side view"
+    },
+    {
+      "id": 1003,
+      "productId": 1,
+      "imageUrl": "https://cdn-dynmedia-1.microsoft.com/is/image/microsoftcorp/SPZ1B-Platinum-13-BB-00?qlt=90&wid=1253&hei=705&extendN=0.12,0.12,0.12,0.12&bgc=FFFFFFFF&fmt=jpg",
+      "altText": "Laptop Pro keyboard detail"
+    },
+    {
+      "id": 1004,
+      "productId": 2,
+      "imageUrl": "https://m.media-amazon.com/images/I/61aiFCe6PpL.jpg",
+      "altText": "Smartphone X front"
+    },
+    {
+      "id": 1005,
+      "productId": 2,
+      "imageUrl": "https://i5.walmartimages.com/asr/504d98eb-4703-43d3-ba29-3763c6526d4b.51f26bc3a78b6db578bc16b4f6a53456.jpeg",
+      "altText": "Smartphone X back camera"
+    },
+    {
+      "id": 1006,
+      "productId": 3,
+      "imageUrl": "https://m.media-amazon.com/images/I/51q4+ArQbJL._AC_UF1000,1000_QL80_.jpg",
+      "altText": "Wireless Headphones"
+    },
+    {
+      "id": 1007,
+      "productId": 3,
+      "imageUrl": "https://www.sbsmobile.com/sve/355552-thickbox_default/floxy-headphones.jpg",
+      "altText": "Wireless Headphones side view"
+    },
+    {
+      "id": 1008,
+      "productId": 4,
+      "imageUrl": "https://cf-images.dustin.eu/cdn-cgi/image/fit=contain,format=auto,quality=75,width=828,fit=contain/image/d2000010011275454/samsung-s85d-55-4k-oled-smart-tv-2024.png",
+      "altText": "4K Ultra HD Smart TV front view"
+    },
+    {
+      "id": 1009,
+      "productId": 4,
+      "imageUrl": "https://images.samsung.com/is/image/samsung/p6pim/my/ua55du8000kxxm/gallery/my-crystal-uhd-du8000-ua55du8000kxxm-540111435?$684_547_PNG$",
+      "altText": "4K Ultra HD Smart TV side view"
+    },
+    {
+      "id": 1010,
+      "productId": 5,
+      "imageUrl": "https://media.power-cdn.net/images/h-6a2c3af72cfc423bd54716fb94209067/products/3790653/3790653_6_600x600_t_g.webp",
+      "altText": "Digital Camera Alpha front view"
+    },
+    {
+      "id": 1011,
+      "productId": 5,
+      "imageUrl": "https://media.power-cdn.net/images/h-6de5664c9b57c0e4356094ae820641a1/products/3790653/3790653_2_600x600_w_g.webp",
+      "altText": "Digital Camera Alpha back view"
+    },
+    {
+      "id": 1012,
+      "productId": 6,
+      "imageUrl": "https://www.komplett.no/img/p/1200/1317939.jpg",
+      "altText": "Gaming Laptop open"
+    },
+    {
+      "id": 1013,
+      "productId": 6,
+      "imageUrl": "https://www.komplett.no/img/p/1200/1317939_1.jpg",
+      "altText": "Gaming Laptop side view"
+    },
+    {
+      "id": 1014,
+      "productId": 7,
+      "imageUrl": "https://www.komplett.no/img/p/1000/1309016.jpg",
+      "altText": "Business Laptop Slim front view"
+    },
+    {
+      "id": 1015,
+      "productId": 7,
+      "imageUrl": "https://www.komplett.no/img/p/995/1309016_1.jpg",
+      "altText": "Business Laptop Slim side view"
+    },
+    {
+      "id": 1016,
+      "productId": 8,
+      "imageUrl": "https://www.komplett.no/img/p/1200/1313895.jpg",
+      "altText": "Mechanical Keyboard RGB top view"
+    },
+    {
+      "id": 1017,
+      "productId": 8,
+      "imageUrl": "https://www.komplett.no/img/p/1200/1313895_2.jpg",
+      "altText": "Mechanical Keyboard RGB side view"
+    },
+    {
+      "id": 1018,
+      "productId": 9,
+      "imageUrl": "https://www.komplett.no/img/p/1200/1307613.jpg",
+      "altText": "Tablet Tab S9 front view"
+    },
+    {
+      "id": 1019,
+      "productId": 9,
+      "imageUrl": "https://www.komplett.no/img/p/1200/1307613_1.jpg",
+      "altText": "Tablet Tab S9 side view"
+    }
+  ]
+  

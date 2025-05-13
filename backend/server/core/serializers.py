@@ -8,33 +8,35 @@ from .models import (
 class BrandSerializer(serializers.ModelSerializer):
     class Meta:
         model = Brand
-        fields = ['name', 'description']
+        fields = '__all__'
 
 
 class CategorySerializer(serializers.ModelSerializer):
     parent = serializers.SerializerMethodField()
     class Meta:
         model = Category
-        fields = ['name', 'description', 'parent'] 
+        fields = '__all__'
 
     def get_parent(self, obj):
         if obj.parent:
             return CategorySerializer(obj.parent).data
         return None
 
+class ProductImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductImage
+        fields = '__all__'
+
 class ProductSerializer(serializers.ModelSerializer):
     brand = BrandSerializer(read_only=True)
     category = CategorySerializer(read_only=True)
+    images = ProductImageSerializer(source='productimage_set', many=True, read_only=True)
 
     class Meta:
         model = Product
         fields = '__all__'
 
 
-class ProductImageSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ProductImage
-        fields = '__all__'
 
 
 class AddressSerializer(serializers.ModelSerializer):

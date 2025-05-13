@@ -22,9 +22,9 @@ INSERT INTO product (product_id, name, description, price, stock_quantity, brand
 
 
 INSERT INTO product_image (image_id, product_id, image_url) VALUES
-(1, 1, 'https://example.com/images/iphone14pro.jpg'),
+(1, 1, 'https://www.komplett.no/img/p/1200/1302902.jpg'),
 (2, 2, 'https://example.com/images/galaxy_s23.jpg'),
-(3, 3, 'https://example.com/images/dell_xps13.jpg'),
+(3, 3, 'https://www.komplett.no/img/p/1200/1313997.jpg'),
 (4, 4, 'https://example.com/images/sony_a7iii.jpg'),
 (5, 5, 'https://example.com/images/hp_usbc_dock.jpg');
 

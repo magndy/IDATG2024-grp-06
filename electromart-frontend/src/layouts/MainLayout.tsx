@@ -1,7 +1,7 @@
 // src/layouts/MainLayout.tsx
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Category, CategoryNode } from "../data/mockData"; // Keep type imports
+import { Category, CategoryNode } from "../data/models"; // Keep type imports
 import { useCart } from "../hooks/useCart";
 import { useAuth } from "../hooks/useAuth";
 import { FaShoppingCart, FaUserCircle } from "react-icons/fa";

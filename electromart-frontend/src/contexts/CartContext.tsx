@@ -6,7 +6,7 @@ import React, {
   useMemo,
   useEffect,
 } from "react";
-import { Product } from "../data/mockData";
+import { Product } from "../data/models";
 
 // Define the shape of an item in the cart
 export interface CartItem extends Product {

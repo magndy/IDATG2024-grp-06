@@ -5,7 +5,7 @@ import {
   Category,
   Product,
   ProductImage,
-} from '../data/mockData'; // Assuming types are here
+} from '../data/models'; // Assuming types are here
 import {
   fetchCategories,
   fetchProducts,

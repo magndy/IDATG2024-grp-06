@@ -5,7 +5,7 @@ import {
   Product,
   ProductImage,
   Brand
-} from "../data/mockData";
+} from "../data/models";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useCart } from "../hooks/useCart";
 import {

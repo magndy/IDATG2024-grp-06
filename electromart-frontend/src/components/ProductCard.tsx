@@ -1,7 +1,7 @@
 // src/components/ProductCard.tsx
 import React, { useState } from "react"; // Ensure useState is imported
 import { Link } from "react-router-dom";
-import { Product } from "../data/mockData";
+import { Product } from "../data/models";
 import { useCart } from "../hooks/useCart";
 
 interface ProductCardProps {

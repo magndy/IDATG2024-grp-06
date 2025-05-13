@@ -2,17 +2,15 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import {
-  Product,
+  Product, // This should be the NEW frontend-friendly Product interface
   Category,
-  ProductImage,
-} from "../data/mockData"; // Types are still fine
+} from "../data/models";
 import ProductCard from "../components/ProductCard";
-// --- Step 1: Import the service functions ---
 import {
   fetchProducts,
   fetchCategories,
-  fetchProductImages,
-} from "../services/apiService"; // Adjust path if needed
+  // fetchProductImages, // Removed
+} from "../services/apiService";
 
 // Keep this helper function (it will operate on fetched category data)
 function getAllDescendantIds(
@@ -33,34 +31,25 @@ function getAllDescendantIds(
 const ProductListPage: React.FC = () => {
   const { categoryId: categoryIdParam } = useParams<{ categoryId?: string }>();
 
-  // --- State Variables (remain the same) ---
-  const [allProductImages, setAllProductImages] = useState<ProductImage[]>([]);
+  // --- State Variables ---
+  // Removed allProductImages state
   const [displayedProducts, setDisplayedProducts] = useState<Product[]>([]);
   const [pageTitle, setPageTitle] = useState<string>("Our Products");
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  // --- Step 2: useEffect to Fetch Data and Filter using service functions ---
   useEffect(() => {
     const loadAndFilterData = async () => {
       setIsLoading(true);
       setError(null);
       try {
-        // --- MODIFIED: Fetch all necessary data concurrently using service functions ---
-        const [productsData, categoriesData, imagesData] = await Promise.all([
-          fetchProducts(),
+        // Fetch only products and categories
+        const [productsData, categoriesData] = await Promise.all([
+          fetchProducts(), // This now returns Product[] with image info
           fetchCategories(),
-          fetchProductImages(),
         ]);
-        // --- END MODIFICATION ---
 
-        // --- REMOVED: Individual response.ok checks and .json() calls ---
-        // These are now handled by the service functions.
-
-        // Store the full fetched list for product images (still needed for ProductCard)
-        setAllProductImages(imagesData);
-
-        // --- Perform Filtering (logic remains the same, using fetched data) ---
+        // --- Perform Filtering ---
         let currentTitle = "Our Products";
         let productsToDisplay = productsData;
 
@@ -74,10 +63,10 @@ const ProductListPage: React.FC = () => {
 
             const categoryIdsToShow = getAllDescendantIds(
               categoryId,
-              categoriesData // Use fetched categoriesData
+              categoriesData
             );
-            productsToDisplay = productsData.filter((product) => // Use fetched productsData
-              categoryIdsToShow.has(product.categoryId)
+            productsToDisplay = productsData.filter((product) =>
+              categoryIdsToShow.has(product.categoryId) // Assumes new Product type has categoryId
             );
           } else {
             setError(`Invalid category ID: ${categoryIdParam}`);
@@ -100,7 +89,6 @@ const ProductListPage: React.FC = () => {
     loadAndFilterData();
   }, [categoryIdParam]);
 
-  // --- Render Logic (remains the same) ---
   if (isLoading) {
     return <div className="text-center p-10">Loading products...</div>;
   }
@@ -115,16 +103,13 @@ const ProductListPage: React.FC = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {displayedProducts.length > 0 ? (
           displayedProducts.map((product) => {
-            const productImage = allProductImages.find(
-              (img: ProductImage) =>
-                img.productId.toString() === product.id.toString()
-            );
-            const imageUrlForCard = productImage?.imageUrl;
+            // Get image URL directly from the transformed product object
+            const imageUrlForCard = product.primaryImageUrl;
 
             return (
               <ProductCard
                 key={product.id}
-                product={product}
+                product={product} // Pass the full transformed product
                 displayImageUrl={imageUrlForCard}
               />
             );

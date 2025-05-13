@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../hooks/useCart';
-import { ProductImage } from '../data/mockData'; // Import type
+import { ProductImage } from '../data/models'; // Import type
 import { fetchProductImages } from '../services/apiService'; // Import service function
 
 const CartPage = () => {

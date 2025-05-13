@@ -1,4 +1,43 @@
-// src/data/mockData.ts
+// In src/data/mockData.ts (or your types file)
+
+export interface APIParentCategory {
+  id: number;
+  parent: null; // Or APIParentCategory if deeply nested and backend supports it
+  name: string;
+  description: string;
+}
+
+export interface APICategory {
+  id: number;
+  parent: APIParentCategory | null;
+  name: string;
+  description: string;
+}
+
+export interface APIBrand {
+  id: number;
+  name: string;
+  description: string;
+}
+
+export interface APIProductImage { // <-- For Error 2
+  id: number;
+  image_url: string;
+  product: number; // This is the product_id it belongs to
+  altText?: string; // <-- ADD THIS as optional
+}
+
+export interface APIProduct {
+  id: number;
+  brand: APIBrand;
+  category: APICategory;
+  images: APIProductImage[];
+  name: string;
+  description: string;
+  price: string;
+  stock_quantity: number;
+  is_active: boolean;
+}
 
 // --- Interfaces ---
 export interface Category {
@@ -8,17 +47,26 @@ export interface Category {
     description?: string;
   }
   
-  // Interface for the ProductCard component & mock data
-  export interface Product {
-    id: number | string;
-    name: string;
-    description: string;
-    price: number;
-    categoryId: number;
-    stockQuantity: number;
-    brandId: number;
-    isActive: boolean;
-  }
+// --- This should be your main exported Product interface ---
+export interface Product {
+  id: number; // Assuming API always sends number
+  name: string;
+  description: string;
+  price: number;         // Parsed from API's string
+  stockQuantity: number; // Was stock_quantity, now camelCase
+  isActive: boolean;     // Was is_active, now camelCase
+  brandName: string;
+  brandId: number;
+  categoryName: string;
+  categoryId: number;
+  categoryParentName?: string;
+  primaryImageUrl?: string;
+  allImages: {
+    id: number;
+    imageUrl: string;
+    altText?: string;
+  }[];
+}
 
   export interface ProductImage {
     id: number;

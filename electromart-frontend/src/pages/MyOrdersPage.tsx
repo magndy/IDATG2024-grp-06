@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
-import { OrderFromDB, OrderStatusMap } from '../data/mockData'; // Import types and map
+import { OrderFromDB, OrderStatusMap } from '../data/models'; // Import types and map
 import { fetchUserOrders } from '../services/apiService'; // Import the new service function
 
 const MyOrdersPage: React.FC = () => {

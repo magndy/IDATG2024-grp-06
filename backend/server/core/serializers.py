@@ -1,0 +1,100 @@
+from rest_framework import serializers
+from .models import (
+    Brand, Category, Product, ProductImage, Address, User,
+    ShoppingCart, CartItem, OrderStatus, Order, OrderItem,
+    PaymentStatus, Payment
+)
+
+class BrandSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Brand
+        fields = ['name', 'description']
+
+
+class CategorySerializer(serializers.ModelSerializer):
+    parent = serializers.SerializerMethodField()
+    class Meta:
+        model = Category
+        fields = ['name', 'description', 'parent'] 
+
+    def get_parent(self, obj):
+        if obj.parent:
+            return CategorySerializer(obj.parent).data
+        return None
+
+class ProductSerializer(serializers.ModelSerializer):
+    brand = BrandSerializer(read_only=True)
+    category = CategorySerializer(read_only=True)
+
+    class Meta:
+        model = Product
+        fields = '__all__'
+
+
+class ProductImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductImage
+        fields = '__all__'
+
+
+class AddressSerializer(serializers.ModelSerializer):
+    city = serializers.CharField(source='city.city_name', read_only=True) 
+    class Meta:
+        model = Address
+        fields = ['address_line', 'city']
+
+
+class UserSerializer(serializers.ModelSerializer):
+    address = AddressSerializer(read_only=True)
+    class Meta:
+        model = User
+        fields = '__all__'
+
+
+class ShoppingCartSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = ShoppingCart
+        fields = '__all__'
+
+
+class CartItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CartItem
+        fields = '__all__'
+
+
+class OrderStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderStatus
+        fields = '__all__'
+
+
+class OrderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Order
+        fields = '__all__'
+
+
+# Calculates subtotal
+class OrderItemSerializer(serializers.ModelSerializer):
+    subtotal = serializers.SerializerMethodField()
+
+    class Meta:
+        model = OrderItem
+        fields = ['id', 'order', 'product', 'quantity', 'price_per_unit', 'subtotal']
+
+    def get_subtotal(self, obj):
+        return obj.subtotal
+
+
+class PaymentStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PaymentStatus
+        fields = '__all__'
+
+
+class PaymentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Payment
+        fields = '__all__'

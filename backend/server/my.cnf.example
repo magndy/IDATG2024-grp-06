@@ -1,0 +1,5 @@
+# my.cnf
+[client]
+database = ElectroMart
+user = YOURUSERNAME
+password = YOURPASSWORD

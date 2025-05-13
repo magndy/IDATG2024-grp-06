@@ -1,30 +1,57 @@
 USAGE:
 
-# Make a config file
-```bash
-cd backend/server/
-touch my.cnf
-# see .example for how to configure
+# Prerequisites
+## MacOS spesific packages (via homebrew)
 ```
-
-```bash
-# activate the virtual enviroment
-source server-venv/bin/activate
-
-# install dependencies
-pip install -r requirements.txt
-
-# MacOS spesific packages (via homebrew)
 brew install mysql 
 brew install pkg-config  
 brew install openssl   
+```
+## Windows packages (WSL)
+```
+apt install mysql-client-core-8.0
+apt install mysql-server
+apt install python3.12-venv
+```
+## Make a config file
+```bash
+cd backend/server/
+touch my.cnf
+# see my.cnf.example for how to configure
+```
+# Set up virtual environment
+```bash
+# Set up python virtual environment inside backend folder
+python -m venv [environment-name]
 
-# start mysql (on MacOS)
-brew services start mysql
+# activate the virtual enviroment
+source [environment-name]/bin/activate
 
+# Install dependencies
+pip install -r requirements.txt
 
-# navigate to server/
-python manage.py runserver
+# start mysql
+brew services start mysql # MacOS
+systemctl start mysql     # Linux and windows with wsl
+
+# Change dir to sql
+cd backend/sql
+
+# Run sql 
+sudo mysql 
+
+```
+## Create database:
+```sql
+CREATE database [name];
+USE [name];
+SOURCE ElectroMartV2.sql;
+SOURCE Mockdata.sql;
+```
+# Start server
+Go to server folder, located at: `backend/server`
+
+run `python manage.py runserver`
 
 # See localhost:8000 in a browser
 ```

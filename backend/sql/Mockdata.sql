@@ -22,11 +22,11 @@ INSERT INTO product (product_id, name, description, price, stock_quantity, brand
 
 
 INSERT INTO product_image (image_id, product_id, image_url) VALUES
-(1, 1, 'https://www.komplett.no/img/p/1200/1302902.jpg'),
-(2, 2, 'https://example.com/images/galaxy_s23.jpg'),
+(1, 1, 'https://media.power-cdn.net/images/h-c0c81089a6d405be3eec3533e1739ffc/products/3614193/3614193_12_1200x1200_t_g.webp'),
+(2, 2, 'https://www.komplett.no/img/p/2272/1302902.jpg?view=gallery&orientation=horizontal'),
 (3, 3, 'https://www.komplett.no/img/p/1200/1313997.jpg'),
-(4, 4, 'https://example.com/images/sony_a7iii.jpg'),
-(5, 5, 'https://example.com/images/hp_usbc_dock.jpg');
+(4, 4, 'https://pricespy-75b8.kxcdn.com/product/standard/280/4703156.jpg'),
+(5, 5, 'https://cf-images.dustin.eu/cdn-cgi/image/fit=contain,format=auto,quality=75,width=828,fit=contain/image/d2000010011307324/hp-usb-c-dock-g5-usb-32-gen-1-31-gen-1-type-c.jpeg');
 
 INSERT INTO city (city_id, city_name, postal_code, country) VALUES
 (1, 'Oslo', '0150', 'Norway'),

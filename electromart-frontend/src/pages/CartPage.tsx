@@ -1,36 +1,9 @@
-// src/pages/CartPage.tsx
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { useCart } from '../hooks/useCart';
-import { ProductImage } from '../data/models'; // Import type
-import { fetchProductImages } from '../services/apiService'; // Import service function
+import { Link } from 'react-router-dom';
 
 const CartPage = () => {
   const { cartItems, removeFromCart, updateQuantity, clearCart, getCartTotal } =
     useCart();
-
-  const [productImages, setProductImages] = useState<ProductImage[]>([]);
-  const [isLoadingImages, setIsLoadingImages] = useState<boolean>(true);
-  const [imageError, setImageError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const loadImages = async () => { // Renamed inner function
-      setIsLoadingImages(true);
-      setImageError(null);
-      try {
-        // Call the imported service function
-        const data: ProductImage[] = await fetchProductImages();
-        setProductImages(data);
-      } catch (e) {
-        console.error("Failed to fetch product images for cart:", e);
-        setImageError(e instanceof Error ? e.message : "Failed to load images");
-      } finally {
-        setIsLoadingImages(false);
-      }
-    };
-
-    loadImages();
-  }, []); // Empty dependency array - fetch images only once on mount
 
   if (cartItems.length === 0) {
     return (
@@ -39,9 +12,7 @@ const CartPage = () => {
           <div className="w-3/4 bg-white px-10 py-10">
             <div className="flex justify-between border-b pb-8">
               <h1 className="font-semibold text-2xl">Shopping Cart</h1>
-              <h2 className="font-semibold text-2xl">
-                {cartItems.length} Items
-              </h2>
+              <h2 className="font-semibold text-2xl">0 Items</h2>
             </div>
             <p className="text-gray-500">Your cart is currently empty.</p>
             <Link
@@ -62,16 +33,6 @@ const CartPage = () => {
     );
   }
 
-  if (isLoadingImages) {
-    return <div className="text-center p-10">Loading cart images...</div>;
-  }
-
-  // Optional: Display a less intrusive warning for image errors, 
-  // allowing the cart to still be functional.
-  // if (imageError) {
-  //   return <div className="text-center p-10 text-red-600">Error loading images: {imageError}</div>;
-  // }
-
   return (
     <div className="container mx-auto mt-10">
       <div className="flex shadow-md my-10">
@@ -80,7 +41,7 @@ const CartPage = () => {
             <h1 className="font-semibold text-2xl">Shopping Cart</h1>
             <h2 className="font-semibold text-2xl">{cartItems.length} Items</h2>
           </div>
-          {imageError && <div className="my-4 text-sm text-red-500 text-center">Warning: Could not load product images ({imageError}). Using fallbacks.</div>}
+
           <div className="flex mt-10">
             <h3 className="font-semibold text-gray-600 text-xs uppercase w-2/5">
               Product Details
@@ -97,13 +58,8 @@ const CartPage = () => {
           </div>
 
           {cartItems.map((item) => {
-            const productImage = productImages.find(
-              (img: ProductImage) =>
-                img.productId.toString() === item.id.toString()
-            );
-            const imageUrlForCartItem =
-              productImage?.imageUrl ||
-              "https://via.placeholder.com/80?text=No+Img";
+            const imageUrl =
+              item.primaryImageUrl || 'https://via.placeholder.com/80?text=No+Img';
 
             return (
               <div
@@ -114,7 +70,7 @@ const CartPage = () => {
                   <div className="w-20 h-24 flex items-center justify-center bg-gray-100 rounded">
                     <img
                       className="max-h-full max-w-full object-contain"
-                      src={imageUrlForCartItem}
+                      src={imageUrl}
                       alt={item.name}
                     />
                   </div>
@@ -181,9 +137,7 @@ const CartPage = () => {
         </div>
 
         <div className="w-1/4 px-8 py-10 bg-gray-100">
-          <h1 className="font-semibold text-2xl border-b pb-8">
-            Order Summary
-          </h1>
+          <h1 className="font-semibold text-2xl border-b pb-8">Order Summary</h1>
           <div className="mt-8">
             <div className="flex font-semibold justify-between py-6 text-sm uppercase">
               <span>Total cost</span>

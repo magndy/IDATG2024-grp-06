@@ -9,7 +9,6 @@ import ProductCard from "../components/ProductCard";
 import {
   fetchProducts,
   fetchCategories,
-  // fetchProductImages, // Removed
 } from "../services/apiService";
 
 // Keep this helper function (it will operate on fetched category data)

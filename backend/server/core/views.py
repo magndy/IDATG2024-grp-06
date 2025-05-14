@@ -1,16 +1,20 @@
 from rest_framework import viewsets, filters
 from django_filters.rest_framework import DjangoFilterBackend
 from .models import (
-    Product, ProductImage, Address, User,
+    Category,Product, ProductImage, Address, User,
     ShoppingCart, CartItem, OrderStatus, Order, OrderItem,
     PaymentStatus, Payment
 )
 from .serializers import (
-    ProductSerializer, ProductImageSerializer,
+    CategorySerializer,ProductSerializer, ProductImageSerializer,
     AddressSerializer, UserSerializer, ShoppingCartSerializer, CartItemSerializer,
     OrderStatusSerializer, OrderSerializer, OrderItemSerializer,
     PaymentStatusSerializer, PaymentSerializer
 )
+
+class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
 
 class ProductViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Product.objects.all()

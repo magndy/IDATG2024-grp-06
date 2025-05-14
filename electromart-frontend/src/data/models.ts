@@ -37,6 +37,22 @@ export interface APIProduct {
   is_active: boolean;
 }
 
+export interface APIUser {
+  id: number;
+  username: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string;
+  role: string;
+  address: {
+    address_line: string;
+    city: string;
+  };
+}
+
+
+
 // --- Frontend-friendly types ---
 
 export interface Category {
@@ -80,6 +96,19 @@ export interface Brand {
 
 export interface CategoryNode extends Category {
   children: CategoryNode[];
+}
+
+// For frontend
+export interface User {
+  id: number;
+  username: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  role: string;
+  addressLine: string;
+  city: string;
 }
 
 // --- Order types ---

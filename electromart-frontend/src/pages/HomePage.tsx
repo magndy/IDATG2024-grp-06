@@ -4,23 +4,6 @@ import { Category, Product } from '../data/models';
 import { fetchCategories, fetchProducts } from '../services/apiService';
 import ProductCard from '../components/ProductCard';
 
-function getAllDescendantIds(startCategoryId: number, allCategories: Category[]): Set<number> {
-  const ids = new Set<number>([startCategoryId]);
-  const queue: number[] = [startCategoryId];
-  let head = 0;
-
-  while (head < queue.length) {
-    const currentParentId = queue[head++];
-    const children = allCategories.filter(cat => cat.parentId === currentParentId);
-    children.forEach(child => {
-      ids.add(child.id);
-      queue.push(child.id);
-    });
-  }
-
-  return ids;
-}
-
 interface DisplayCategoryRow {
   category: Category;
   products: Product[];
@@ -35,24 +18,25 @@ const HomePage: React.FC = () => {
     const loadHomePageData = async () => {
       setIsLoading(true);
       setError(null);
+
       try {
         const [categoriesData, productsData] = await Promise.all([
           fetchCategories(),
           fetchProducts(),
         ]);
 
-        const topLevelCategories = categoriesData.filter(cat => cat.parentId === null);
+        // ✅ Only use categories that have a parent (child categories)
+        const childCategories = categoriesData.filter(cat => cat.parentId !== null);
         const rows: DisplayCategoryRow[] = [];
 
-        for (const topCat of topLevelCategories) {
-          const descendantIds = getAllDescendantIds(topCat.id, categoriesData);
+        for (const cat of childCategories) {
           const categoryProducts = productsData
-            .filter(p => descendantIds.has(p.categoryId))
+            .filter(p => p.categoryId === cat.id)
             .slice(0, 3);
 
           if (categoryProducts.length > 0) {
             rows.push({
-              category: topCat,
+              category: cat,
               products: categoryProducts,
             });
           }
@@ -70,9 +54,17 @@ const HomePage: React.FC = () => {
     loadHomePageData();
   }, []);
 
-  if (isLoading) return <div className="container mx-auto p-4 text-center">Loading ElectroMart Home...</div>;
-  if (error) return <div className="container mx-auto p-4 text-center text-red-600">Error: {error}</div>;
-  if (displayRows.length === 0) return <div className="container mx-auto p-4 text-center">No featured products available at the moment.</div>;
+  if (isLoading) {
+    return <div className="container mx-auto p-4 text-center">Loading ElectroMart Home...</div>;
+  }
+
+  if (error) {
+    return <div className="container mx-auto p-4 text-center text-red-600">Error: {error}</div>;
+  }
+
+  if (displayRows.length === 0) {
+    return <div className="container mx-auto p-4 text-center">No featured products available at the moment.</div>;
+  }
 
   return (
     <div className="container mx-auto p-4 space-y-12">

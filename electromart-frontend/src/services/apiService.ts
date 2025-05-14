@@ -1,9 +1,10 @@
 import {
   APIProduct,
   APICategory,
+  APIUser,
   Product,
   Category,
-  Brand,
+  User,
   OrderFromDB
 } from '../data/models';
 
@@ -49,6 +50,21 @@ function transformAPICategory(apiCat: APICategory): Category {
   };
 }
 
+
+function transformAPIUser(apiUser: APIUser): User {
+  return {
+    id: apiUser.id,
+    username: apiUser.username,
+    firstName: apiUser.first_name,
+    lastName: apiUser.last_name,
+    email: apiUser.email,
+    phone: apiUser.phone,
+    role: apiUser.role,
+    addressLine: apiUser.address.address_line,
+    city: apiUser.address.city,
+  };
+}
+
 // --- API Fetches ---
 
 export const fetchProducts = async (): Promise<Product[]> => {
@@ -63,10 +79,12 @@ export const fetchCategories = async (): Promise<Category[]> => {
   return apiCategories.map(transformAPICategory);
 };
 
-export const fetchBrands = async (): Promise<Brand[]> => {
-  const response = await fetch('/mock-data/brands.json');
-  return handleResponse<Brand[]>(response);
+export const fetchCurrentUser = async (): Promise<User> => {
+  const response = await fetch('http://127.0.0.1:8000/api/me/', { credentials: 'include' });
+  const apiUser: APIUser = await handleResponse(response);
+  return transformAPIUser(apiUser);
 };
+
 
 export const fetchUserOrders = async (): Promise<OrderFromDB[]> => {
   const response = await fetch('/mock-data/user-orders.json');

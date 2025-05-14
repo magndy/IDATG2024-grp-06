@@ -1,95 +1,83 @@
 // src/contexts/AuthContext.tsx
-import React, { createContext, useState, ReactNode } from "react";
+import React, { createContext, useState, useEffect, ReactNode } from "react";
+import { User } from "../data/models";
+import { fetchCurrentUser } from "../services/apiService";
 
-// 1. Define a simple User type (adjust as needed)
-export interface User {
-  id: string | number; // Or just string/number depending on your backend
-  name?: string; // Optional name
-  email: string; // Assuming email is the main identifier/username
-  // Add other relevant user fields if needed later (e.g., roles)
-}
-
-// 2. Define the shape of the context value
 export interface AuthContextType {
-  currentUser: User | null; // null if logged out, User object if logged in
-  isLoading: boolean; // For potential async checks later
-  login: (email?: string, password?: string) => Promise<void>; // Placeholder login
-  logout: () => void; // Placeholder logout
-  register: (name?: string, email?: string, password?: string) => Promise<void>; // Placeholder register
+  currentUser: User | null;
+  isLoading: boolean;
+  login: (email: string, password: string) => Promise<void>;
+  logout: () => Promise<void>;
+  register: (name: string, email: string, password: string) => Promise<void>;
 }
 
-// 3. Create the Context with a default value (null!)
-// We assert non-null because we'll always use it within the Provider
-// eslint-disable-next-line react-refresh/only-export-components
 export const AuthContext = createContext<AuthContextType>(null!);
 
-// 4. Create the Provider Component
 interface AuthProviderProps {
   children: ReactNode;
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  // isLoading could be true initially if checking auth status on load later
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  // --- Placeholder Auth Functions ---
-
-  // Simulate login - sets a dummy user
-  const login = async (email?: string, password?: string) => {
-    console.log("Attempting login with:", { email, password }); // Log credentials (remove in production!)
-    setIsLoading(true);
-    // Simulate API call delay
-    await new Promise((res) => setTimeout(res, 500));
-    // In real app: make API call, get user data/token on success
-    const dummyUser: User = {
-      id: "user123",
-      name: "Test User",
-      email: email || "test@example.com",
+  // --- Load current user on mount ---
+  useEffect(() => {
+    const loadUser = async () => {
+      try {
+        const user = await fetchCurrentUser();
+        setCurrentUser(user);
+      } catch {
+        setCurrentUser(null);
+      } finally {
+        setIsLoading(false);
+      }
     };
-    setCurrentUser(dummyUser);
-    setIsLoading(false);
-    console.log("Simulated login successful:", dummyUser);
-    // No need to return Promise.resolve() explicitly from async function
+    loadUser();
+  }, []);
+
+  // --- Login ---
+  const login = async (email: string, password: string) => {
+    setIsLoading(true);
+    try {
+      const res = await fetch("http://127.0.0.1:8000/api/login/", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!res.ok) {
+        const error = await res.text();
+        throw new Error(`Login failed: ${error}`);
+      }
+
+      const user = await fetchCurrentUser();
+      setCurrentUser(user);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  // Simulate logout - clears user state
-  const logout = () => {
-    console.log("Logging out");
-    // In real app: call logout API endpoint, clear tokens etc.
+  // --- Logout ---
+  const logout = async () => {
+    await fetch("http://127.0.0.1:8000/api/logout/", {
+      method: "POST",
+      credentials: "include",
+    });
     setCurrentUser(null);
   };
 
-  // Simulate register - logs details and sets dummy user
-  const register = async (name?: string, email?: string, password?: string) => {
-    console.log("Attempting registration with:", { name, email, password }); // Log credentials (remove in production!)
-    setIsLoading(true);
-    // Simulate API call delay
-    await new Promise((res) => setTimeout(res, 500));
-    // In real app: make API call, handle success/error
-    const dummyUser: User = {
-      id: "user" + Math.random().toString(16).slice(2), // pseudo-random ID
-      name: name || "New User",
-      email: email || "register@example.com",
-    };
-    setCurrentUser(dummyUser);
-    setIsLoading(false);
-    console.log("Simulated registration successful:", dummyUser);
-  };
-
-  // --- Provide Context Value ---
-  const value = {
-    currentUser,
-    isLoading,
-    login,
-    logout,
-    register,
+  // --- Register (not yet implemented) ---
+  const register = async (name: string, email: string, password: string) => {
+    console.warn("Register is not implemented.");
+    throw new Error("Registration not yet implemented.");
   };
 
   return (
-    <AuthContext.Provider value={value}>
-      {/* Render children only when not initially loading auth status */}
-      {/* We can refine this loading state later if needed */}
+    <AuthContext.Provider
+      value={{ currentUser, isLoading, login, logout, register }}
+    >
       {children}
     </AuthContext.Provider>
   );

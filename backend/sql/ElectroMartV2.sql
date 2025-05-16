@@ -59,6 +59,7 @@ CREATE TABLE `user` (
     address INT,
     phone VARCHAR(20) UNIQUE NOT NULL,
     role VARCHAR(50) DEFAULT 'customer', /*admin, customer*/
+    is_active BOOLEAN DEFAULT TRUE,
     FOREIGN KEY (address) REFERENCES address(address_id) ON DELETE CASCADE
 );
 

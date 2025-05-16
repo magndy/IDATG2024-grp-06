@@ -1,4 +1,3 @@
-// src/contexts/AuthContext.tsx
 import React, { createContext, useState, useEffect, ReactNode } from "react";
 import { User } from "../data/models";
 import { fetchCurrentUser } from "../services/apiService";
@@ -20,8 +19,22 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [csrfReady, setCsrfReady] = useState<boolean>(false);
 
-  // --- Load current user on mount ---
+  const getCsrfToken = () =>
+    document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("csrftoken="))
+      ?.split("=")[1] || "";
+
+  // Ensure CSRF cookie is set before any login/logout
+  useEffect(() => {
+    fetch("http://localhost:8000/api/csrf/", {
+      credentials: "include",
+    }).then(() => setCsrfReady(true));
+  }, []);
+
+  // Load user on mount
   useEffect(() => {
     const loadUser = async () => {
       try {
@@ -36,14 +49,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     loadUser();
   }, []);
 
-  // --- Login ---
   const login = async (email: string, password: string) => {
+    if (!csrfReady) throw new Error("CSRF token not ready yet.");
     setIsLoading(true);
     try {
-      const res = await fetch("http://127.0.0.1:8000/api/login/", {
+      const res = await fetch("http://localhost:8000/api/login/", {
         method: "POST",
         credentials: "include",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": getCsrfToken(),
+        },
         body: JSON.stringify({ email, password }),
       });
 
@@ -59,18 +75,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  // --- Logout ---
   const logout = async () => {
-    await fetch("http://127.0.0.1:8000/api/logout/", {
-      method: "POST",
-      credentials: "include",
-    });
-    setCurrentUser(null);
+    if (!csrfReady) throw new Error("CSRF token not ready yet.");
+    try {
+      await fetch("http://localhost:8000/api/logout/", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "X-CSRFToken": getCsrfToken(),
+        },
+      });
+    } catch (err) {
+      console.warn("Logout failed:", err);
+    } finally {
+      setCurrentUser(null);
+    }
   };
 
-  // --- Register (not yet implemented) ---
-  const register = async (name: string, email: string, password: string) => {
-    console.warn("Register is not implemented.");
+  const register = async () => {
     throw new Error("Registration not yet implemented.");
   };
 

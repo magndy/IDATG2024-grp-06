@@ -68,23 +68,24 @@ function transformAPIUser(apiUser: APIUser): User {
 // --- API Fetches ---
 
 export const fetchProducts = async (): Promise<Product[]> => {
-  const response = await fetch('http://127.0.0.1:8000/api/products/');
+  const response = await fetch('http://localhost:8000/api/products/');
   const apiProducts: APIProduct[] = await handleResponse(response);
   return apiProducts.map(transformAPIProductToProduct);
 };
 
 export const fetchCategories = async (): Promise<Category[]> => {
-  const response = await fetch('http://127.0.0.1:8000/api/categories/');
+  const response = await fetch('http://localhost:8000/api/categories/');
   const apiCategories: APICategory[] = await handleResponse(response);
   return apiCategories.map(transformAPICategory);
 };
 
 export const fetchCurrentUser = async (): Promise<User> => {
-  const response = await fetch('http://127.0.0.1:8000/api/me/', { credentials: 'include' });
-  const apiUser: APIUser = await handleResponse(response);
-  return transformAPIUser(apiUser);
+  const res = await fetch("http://localhost:8000/api/me/", {
+    credentials: "include",
+  });
+  if (!res.ok) throw new Error("Not authenticated");
+  return await res.json();
 };
-
 
 export const fetchUserOrders = async (): Promise<OrderFromDB[]> => {
   const response = await fetch('/mock-data/user-orders.json');

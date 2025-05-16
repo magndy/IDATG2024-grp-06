@@ -66,6 +66,7 @@ class User(models.Model):
     address = models.ForeignKey(Address, null=True, blank=True,db_column='address', on_delete=models.CASCADE)
     phone = models.CharField(max_length=20, blank=True)
     role = models.CharField(max_length=50,default='customer')
+    is_active = models.BooleanField(default=True)
     class Meta:
         managed = False
         db_table = 'user'

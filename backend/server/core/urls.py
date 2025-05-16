@@ -1,5 +1,5 @@
 from django.urls import path, include
-from .views_auth import login_view, logout_view, me_view 
+from .views_auth import csrf,login_view, logout_view, me_view 
 from rest_framework.routers import DefaultRouter
 from .views import (
     CategoryViewSet,ProductViewSet,
@@ -22,8 +22,9 @@ router.register(r'payment-statuses', PaymentStatusViewSet)
 router.register(r'payments', PaymentViewSet)
 
 urlpatterns = [
-    path('api/login/', login_view, name='api-login'),
-    path('api/logout/', logout_view, name='api-logout'),
-    path('api/me/', me_view, name='api-me'),
+    path('login/', login_view),
+    path('logout/', logout_view),
+    path('me/', me_view),
+    path('csrf/', csrf),
     path('', include(router.urls)),
 ]

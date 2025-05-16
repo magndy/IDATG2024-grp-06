@@ -42,12 +42,12 @@ INSERT INTO address (address_id, address_line, city_id) VALUES
 (4, 'Nyhavn 17', 4),
 (5, 'Mannerheimintie 10', 5);
 
-INSERT INTO `user` (user_id, username, first_name, last_name, email, password, address, phone, role) VALUES
-(1, 'jdoe', 'John', 'Doe', 'jdoe@example.com', 'hashed_password_1', 1, '+4712345678', 'customer'),
-(2, 'annab', 'Anna', 'Berg', 'anna.berg@example.com', 'hashed_password_2', 2, '+4798765432', 'customer'),
-(3, 'karlsson', 'Karl', 'Karlsson', 'karl.k@example.com', 'hashed_password_3', 3, '+46701112233', 'customer'),
-(4, 'adminuser', 'Vinjar', 'Berland', 'admin@example.com', 'hashed_password_4', 4, '+4522334455', 'admin'),
-(5, 'mlehto', 'Maria', 'Lehto', 'maria.lehto@example.com', 'hashed_password_5', 5, '+358401234567', 'customer');
+INSERT INTO `user` (user_id, username, first_name, last_name, email, password, address, phone, role, is_active) VALUES
+(1, 'jdoe', 'John', 'Doe', 'jdoe@example.com', 'hashed_password_1', 1, '+4712345678', 'customer', TRUE),
+(2, 'annab', 'Anna', 'Berg', 'anna.berg@example.com', 'hashed_password_2', 2, '+4798765432', 'customer', TRUE),
+(3, 'karlsson', 'Karl', 'Karlsson', 'karl.k@example.com', 'hashed_password_3', 3, '+46701112233', 'customer', TRUE),
+(4, 'adminuser', 'Vinjar', 'Berland', 'admin@example.com', 'hashed_password_4', 4, '+4522334455', 'admin', TRUE),
+(5, 'mlehto', 'Maria', 'Lehto', 'maria.lehto@example.com', 'hashed_password_5', 5, '+358401234567', 'customer', TRUE);
 
 INSERT INTO shopping_cart (cart_id, user_id, updated_at) VALUES
 (1, 1, '2025-05-05 14:30:00'), -- John Doe

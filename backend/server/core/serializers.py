@@ -47,10 +47,22 @@ class AddressSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    address = AddressSerializer(read_only=True)
+    address_line = serializers.SerializerMethodField()
+    city_name = serializers.SerializerMethodField()
+
     class Meta:
         model = User
-        fields = '__all__'
+        fields = [
+            'id', 'username', 'first_name', 'last_name',
+            'email', 'phone', 'role',
+            'address_line', 'city_name'
+        ]
+
+    def get_address_line(self, obj):
+        return obj.address.address_line if obj.address else ""
+
+    def get_city_name(self, obj):
+        return obj.address.city.city_name if obj.address and obj.address.city else ""
 
 
 class ShoppingCartSerializer(serializers.ModelSerializer):

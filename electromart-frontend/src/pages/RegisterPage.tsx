@@ -8,6 +8,7 @@ interface RegistrationErrors {
   firstName?: string;
   lastName?: string;
   email?: string;
+  username?: string;
   password?: string;
   confirmPassword?: string;
   phone?: string;
@@ -57,6 +58,7 @@ const RegisterPage: React.FC = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [phone, setPhone] = useState('');
@@ -81,6 +83,8 @@ const RegisterPage: React.FC = () => {
 
     const emailError = validateEmail(email);
     if (emailError) newErrors.email = emailError;
+
+    if (!username.trim()) newErrors.username = "Username is required.";
 
     const passwordError = validatePassword(password);
     if (passwordError) newErrors.password = passwordError;
@@ -115,6 +119,7 @@ const RegisterPage: React.FC = () => {
       firstName,
       lastName,
       email,
+      username,
       password, // In a real app, only send password if setting it
       phone,
       address: {

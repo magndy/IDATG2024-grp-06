@@ -175,7 +175,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         <>
           <li className="flex items-center text-sm text-gray-300">
             <FaUserCircle className="mr-1" />
-            Welcome, {currentUser.name || currentUser.email}
+            Welcome, {currentUser.username || currentUser.email}
           </li>
           {/* --- ADDED MY ORDERS LINK --- */}
           <li>

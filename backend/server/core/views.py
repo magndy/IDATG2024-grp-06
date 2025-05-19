@@ -1,20 +1,27 @@
+from rest_framework.response import Response
 from rest_framework import viewsets, filters
 from django_filters.rest_framework import DjangoFilterBackend
 from .models import (
     Category,Product, ProductImage, Address, User,
     ShoppingCart, CartItem, OrderStatus, Order, OrderItem,
-    PaymentStatus, Payment
+    PaymentStatus, Payment 
 )
 from .serializers import (
-    CategorySerializer,ProductSerializer, ProductImageSerializer,
+    CategorySerializer, ProductSerializer, ProductImageSerializer,
     AddressSerializer, UserSerializer, ShoppingCartSerializer, CartItemSerializer,
     OrderStatusSerializer, OrderSerializer, OrderItemSerializer,
-    PaymentStatusSerializer, PaymentSerializer
+    PaymentStatusSerializer, PaymentSerializer,
+    # Add these if you're using them
+    OrderItemDetailSerializer, OrderHistorySerializer
 )
 
 class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+
+class OrderItemViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = OrderItem.objects.all()
+    serializer_class = OrderItemSerializer
 
 class ProductViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Product.objects.all()
@@ -102,9 +109,31 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = OrderSerializer
 
 
-class OrderItemViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = OrderItem.objects.all()
-    serializer_class = OrderItemSerializer
+class OrderViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filterset_fields = []
+    search_fields = ['id']
+    
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        user_id = self.request.query_params.get('userid', None)
+        
+        if user_id:
+            # Filter orders by user ID
+            queryset = queryset.filter(user_id=user_id)
+        
+        # Order by date (newest first)
+        queryset = queryset.order_by('-order_date')
+        
+        return queryset
+    
+    def get_serializer_class(self):
+        # Use OrderHistorySerializer when history parameter is present or userid is in the query
+        if self.request.query_params.get('history', False) or self.request.query_params.get('userid', None):
+            return OrderHistorySerializer
+        return OrderSerializer
 
 
 class PaymentStatusViewSet(viewsets.ReadOnlyModelViewSet):

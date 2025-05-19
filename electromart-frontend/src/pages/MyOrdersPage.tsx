@@ -10,7 +10,7 @@ const MyOrdersPage: React.FC = () => {
   const [orders, setOrders] = useState<OrderFromDB[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-
+  
   useEffect(() => {
     // Only attempt to fetch orders if there's a logged-in user
     if (currentUser) {
@@ -20,15 +20,9 @@ const MyOrdersPage: React.FC = () => {
 
       const loadOrders = async () => {
         try {
-          const data = await fetchUserOrders();
-          // In a real app, the API would filter by currentUser.id.
-          // For mock, we'll filter client-side or assume the mock file is user-specific.
-          // For this example, let's assume user-orders.json contains orders for the "logged-in" mock user
-          // or all orders if user_id is null (guest orders visible to anyone for now).
-          // If your mock User has an ID, you could filter here:
-          // const userSpecificOrders = data.filter(order => order.user_id === currentUser.id || order.user_id === null);
-          // setOrders(userSpecificOrders);
-          setOrders(data); // Using all orders from the mock file for now
+          // Pass the currentUser.id to fetchUserOrders
+          const data = await fetchUserOrders(currentUser.id);
+          setOrders(data);
         } catch (e) {
           console.error("Error fetching orders:", e);
           setError(e instanceof Error ? e.message : "Could not load your orders.");
@@ -92,13 +86,7 @@ const MyOrdersPage: React.FC = () => {
                 {order.tracking_number && (
                   <p><span className="font-medium text-gray-900">Tracking:</span> {order.tracking_number}</p>
                 )}
-                {/* <p><span className="font-medium text-gray-900">Address ID:</span> {order.shipping_address_id}</p> */}
               </div>
-              {/* <div className="mt-4">
-                <Link to={`/my-orders/${order.order_id}`} className="text-indigo-600 hover:text-indigo-800 font-semibold text-sm">
-                  View Details &rarr;
-                </Link>
-              </div> */}
             </div>
           ))}
         </div>

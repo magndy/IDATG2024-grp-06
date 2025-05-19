@@ -103,7 +103,14 @@ export const registerUser = async (registrationDetails: any): Promise<void> => {
 };
 
 
-export const fetchUserOrders = async (): Promise<OrderFromDB[]> => {
-  const response = await fetch('/mock-data/user-orders.json');
+export const fetchUserOrders = async (userId: number | string): Promise<OrderFromDB[]> => {
+  if (!userId) {
+    throw new Error("User ID is required to fetch orders");
+  }
+  
+  const response = await fetch(`http://localhost:8000/api/orders/?userid=${userId}&history=true`, {
+    credentials: "include", // Match the credentials pattern from fetchCurrentUser
+  });
+  
   return handleResponse<OrderFromDB[]>(response);
 };

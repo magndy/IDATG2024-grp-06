@@ -3,7 +3,7 @@ from .views_auth import csrf,login_view, logout_view, me_view
 from .views_register import register_user
 from rest_framework.routers import DefaultRouter
 from .views import (
-    CategoryViewSet,ProductViewSet,
+    CategoryViewSet,ProductViewSet, ProductImageViewSet,
     AddressViewSet, UserViewSet, ShoppingCartViewSet, CartItemViewSet,
     OrderStatusViewSet, OrderViewSet, OrderItemViewSet,
     PaymentStatusViewSet, PaymentViewSet

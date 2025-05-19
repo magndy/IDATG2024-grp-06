@@ -87,6 +87,22 @@ export const fetchCurrentUser = async (): Promise<User> => {
   return await res.json();
 };
 
+export const registerUser = async (registrationDetails: any): Promise<void> => {
+  const response = await fetch("http://localhost:8000/api/register/", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(registrationDetails),
+  });
+
+  if (!response.ok) {
+    const data = await response.json().catch(() => null);
+    throw new Error(data?.error || "Registration failed");
+  }
+};
+
+
 export const fetchUserOrders = async (): Promise<OrderFromDB[]> => {
   const response = await fetch('/mock-data/user-orders.json');
   return handleResponse<OrderFromDB[]>(response);

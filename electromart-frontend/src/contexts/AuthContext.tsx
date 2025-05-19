@@ -1,13 +1,13 @@
 import React, { createContext, useState, useEffect, ReactNode } from "react";
 import { User } from "../data/models";
-import { fetchCurrentUser } from "../services/apiService";
+import { fetchCurrentUser, registerUser } from "../services/apiService";
 
 export interface AuthContextType {
   currentUser: User | null;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
-  register: (name: string, email: string, password: string) => Promise<void>;
+  register: (registrationDetails: any) => Promise<void>;
 }
 
 export const AuthContext = createContext<AuthContextType>(null!);
@@ -92,8 +92,27 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const register = async () => {
-    throw new Error("Registration not yet implemented.");
+  const register = async (registrationDetails: any) => {
+    if (!csrfReady) throw new Error("CSRF token not ready yet.");
+    setIsLoading(true);
+    try {
+      const res = await fetch("http://localhost:8000/api/register/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": getCsrfToken(),
+        },
+        body: JSON.stringify(registrationDetails),
+        credentials: "include",
+      });
+
+      if (!res.ok) {
+        const errorBody = await res.text();
+        throw new Error(`Registration failed: ${errorBody}`);
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

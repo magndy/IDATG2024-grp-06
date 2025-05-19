@@ -5,6 +5,7 @@ from .models import User, Address, City
 from django.db import transaction
 from django.contrib.auth.hashers import make_password
 
+
 @csrf_exempt
 def register_user(request):
     if request.method != 'POST':
@@ -13,30 +14,34 @@ def register_user(request):
     try:
         data = json.loads(request.body)
 
-        # Get or create city
-        city_name = data['address']['city']
-        postal_code = data['address']['postalCode']
-        country = data['address']['country']
+        # Normalize and get/create city
+        city_name = data['address']['city'].strip().title()
+        postal_code = data['address']['postalCode'].strip()
+        country = data['address']['country'].strip().title()
+
         city, _ = City.objects.get_or_create(
             city_name=city_name,
             postal_code=postal_code,
             country=country
         )
 
+        print(f"Using city ID: {city.id} ({city.city_name})")
+
         # Create address
         address = Address.objects.create(
-            address_line=data['address']['line'],
+            address_line=data['address']['line'].strip(),
             city=city
         )
 
         # Create user
         with transaction.atomic():
             user = User.objects.create(
-                first_name=data['firstName'],
-                last_name=data['lastName'],
-                email=data['email'],
-                phone=data['phone'],
-                password=make_password(data['password']),  # hash the password
+                username=data['username'],
+                first_name=data['firstName'].strip(),
+                last_name=data['lastName'].strip(),
+                email=data['email'].strip().lower(),
+                phone=data['phone'].strip(),
+                password=make_password(data['password']),
                 address=address
             )
 
@@ -45,3 +50,4 @@ def register_user(request):
     except Exception as e:
         print("Registration error:", e)
         return JsonResponse({'error': str(e)}, status=400)
+

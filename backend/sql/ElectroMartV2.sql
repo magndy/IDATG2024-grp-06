@@ -1,14 +1,11 @@
-/*
-
-*/
 CREATE TABLE brand (
-    brand_id INT PRIMARY KEY,
+    brand_id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     description TEXT
 );
 
 CREATE TABLE category (
-    category_id INT PRIMARY KEY,
+    category_id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     description TEXT,
     parent_id INT,
@@ -16,7 +13,7 @@ CREATE TABLE category (
 ); 
 
 CREATE TABLE product (
-    product_id INT PRIMARY KEY,
+    product_id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     description TEXT,
     price DECIMAL(10, 2) NOT NULL,
@@ -29,28 +26,28 @@ CREATE TABLE product (
 );
 
 CREATE TABLE product_image (
-    image_id INT PRIMARY KEY,
+    image_id INT AUTO_INCREMENT PRIMARY KEY,
     product_id INT,
     image_url VARCHAR(255) NOT NULL,
     FOREIGN KEY (product_id) REFERENCES product(product_id) ON DELETE CASCADE
 );
 
 CREATE TABLE city (
-    city_id INT PRIMARY KEY,
+    city_id INT AUTO_INCREMENT PRIMARY KEY,
     city_name VARCHAR(100) NOT NULL,
     postal_code VARCHAR(100) NOT NULL,
     country VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE address (
-    address_id INT PRIMARY KEY,
-    address_line VARCHAR(255) NOT NULl,
+    address_id INT AUTO_INCREMENT PRIMARY KEY,
+    address_line VARCHAR(255) NOT NULL,
     city_id INT NOT NULL,
     FOREIGN KEY (city_id) REFERENCES city(city_id) ON DELETE CASCADE
 );
 
 CREATE TABLE `user` (
-    user_id INT PRIMARY KEY,
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(100),
     first_name VARCHAR(100),
     last_name VARCHAR(100),
@@ -64,14 +61,14 @@ CREATE TABLE `user` (
 );
 
 CREATE TABLE shopping_cart (
-    cart_id INT PRIMARY KEY,
+    cart_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES `user` (user_id) ON DELETE CASCADE
 );
 
 CREATE TABLE cart_item (
-    cart_item_id INT PRIMARY KEY,
+    cart_item_id INT AUTO_INCREMENT PRIMARY KEY,
     cart_id INT NOT NULL,
     product_id INT NOT NULL,
     FOREIGN KEY (cart_id) REFERENCES shopping_cart(cart_id) ON DELETE CASCADE,
@@ -79,12 +76,12 @@ CREATE TABLE cart_item (
 );
 
 CREATE TABLE order_status (
-    status_id INT PRIMARY KEY,
+    status_id INT AUTO_INCREMENT PRIMARY KEY,
     status_name VARCHAR(50) NOT NULL /* PROCESSING, DELIVERED, CANCELLED */
 );
 
 CREATE TABLE `order` (
-    order_id INT PRIMARY KEY,
+    order_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     total_amount INT NOT NULL, 
@@ -97,7 +94,7 @@ CREATE TABLE `order` (
 );
 
 CREATE TABLE order_item (
-    order_item_id INT PRIMARY KEY,
+    order_item_id INT AUTO_INCREMENT PRIMARY KEY,
     order_id INT NOT NULL,
     product_id INT NULL,
     quantity INT NOT NULL,
@@ -107,12 +104,12 @@ CREATE TABLE order_item (
 );
 
 CREATE TABLE payment_status (
-    payment_status_id INT PRIMARY KEY,
-    status_name VARCHAR(50) NOT NULL /*COMPLETING, PENDING, FAILED*/
+    payment_status_id INT AUTO_INCREMENT PRIMARY KEY,
+    status_name VARCHAR(50) NOT NULL /* COMPLETING, PENDING, FAILED */
 );
 
 CREATE TABLE payment (
-    payment_id INT PRIMARY KEY,
+    payment_id INT AUTO_INCREMENT PRIMARY KEY,
     order_id INT NOT NULL,
     payment_method VARCHAR(50) NOT NULL,
     amount DECIMAL(10, 2) NOT NULL,

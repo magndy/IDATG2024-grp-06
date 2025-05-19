@@ -1,14 +1,12 @@
 // src/pages/RegisterPage.tsx
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
+import { registerUser } from '../services/apiService';
 
-// --- Type for our errors state object ---
 interface RegistrationErrors {
   firstName?: string;
   lastName?: string;
   email?: string;
-  username?: string;
   password?: string;
   confirmPassword?: string;
   phone?: string;
@@ -16,15 +14,14 @@ interface RegistrationErrors {
   postalCode?: string;
   city?: string;
   country?: string;
-  form?: string; // For general form errors not tied to a specific field
+  form?: string;
 }
 
-// --- Validation Helper Functions ---
 const validateEmail = (email: string): string | undefined => {
   if (!email) return "Email is required.";
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email)) return "Invalid email format.";
-  return undefined; // No error
+  return undefined;
 };
 
 const validatePassword = (password: string): string | undefined => {
@@ -32,7 +29,7 @@ const validatePassword = (password: string): string | undefined => {
   if (password.length < 8) return "Password must be at least 8 characters.";
   if (!/[A-Z]/.test(password)) return "Password must contain at least one uppercase letter.";
   if (!/[0-9]/.test(password)) return "Password must contain at least one number.";
-  return undefined; // No error
+  return undefined;
 };
 
 const isNumeric = (value: string): boolean => /^\d+$/.test(value);
@@ -40,51 +37,40 @@ const isNumeric = (value: string): boolean => /^\d+$/.test(value);
 const validatePhone = (phone: string): string | undefined => {
   if (!phone) return "Phone number is required.";
   if (!isNumeric(phone)) return "Phone number must contain only digits.";
-  // Add more specific phone length/format checks if needed (e.g., for Norway)
-  // if (phone.length !== 8) return "Phone number must be 8 digits." // Example
   return undefined;
 };
 
 const validatePostalCode = (postalCode: string): string | undefined => {
   if (!postalCode) return "Postal code is required.";
   if (!isNumeric(postalCode)) return "Postal code must contain only digits.";
-  // Add more specific postal code length/format checks if needed (e.g., for Norway)
-  // if (postalCode.length !== 4) return "Postal code must be 4 digits." // Example
   return undefined;
 };
 
 const RegisterPage: React.FC = () => {
-  // --- Form Input States ---
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
-  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [phone, setPhone] = useState('');
   const [addressLine, setAddressLine] = useState('');
   const [postalCode, setPostalCode] = useState('');
   const [city, setCity] = useState('');
-  const [country, setCountry] = useState('Norway'); // Default
-
-  // --- Error State ---
+  const [country, setCountry] = useState('Norway');
   const [errors, setErrors] = useState<RegistrationErrors>({});
+  const [isLoading, setIsLoading] = useState(false);
 
-  const { register, isLoading } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     const newErrors: RegistrationErrors = {};
 
-    // --- Perform All Validations ---
     if (!firstName.trim()) newErrors.firstName = "First name is required.";
     if (!lastName.trim()) newErrors.lastName = "Last name is required.";
 
     const emailError = validateEmail(email);
     if (emailError) newErrors.email = emailError;
-
-    if (!username.trim()) newErrors.username = "Username is required.";
 
     const passwordError = validatePassword(password);
     if (passwordError) newErrors.password = passwordError;
@@ -106,40 +92,38 @@ const RegisterPage: React.FC = () => {
     if (!city.trim()) newErrors.city = "City is required.";
     if (!country.trim()) newErrors.country = "Country is required.";
 
-    // If there are any errors, update state and stop submission
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
 
-    setErrors({}); // Clear errors if all validations pass
+    setErrors({});
+    setIsLoading(true);
 
-    // Collect all registration data
     const registrationDetails = {
       firstName,
       lastName,
       email,
-      username,
-      password, // In a real app, only send password if setting it
+      username: email, // 👈 Set username as email here
+      password,
       phone,
       address: {
         line: addressLine,
         postalCode,
         city,
         country,
-      }
+      },
     };
 
-    console.log("--- Attempting Registration (Simulation) ---");
-    console.log("Full Registration Details:", JSON.stringify(registrationDetails, null, 2));
-
     try {
-      await register(`${firstName} ${lastName}`, email, password); // Placeholder context call
-      alert("Registration successful (simulated)! Please login.");
+      await registerUser(registrationDetails);
+      alert("Registration successful! Please login.");
       navigate('/login');
-    } catch (err) {
-      console.error("Registration simulation error:", err);
-      setErrors({ form: 'Registration failed. Please try again.' });
+    } catch (error: any) {
+      console.error("Registration failed:", error);
+      setErrors({ form: error.message });
+    } finally {
+      setIsLoading(false);
     }
   };
 

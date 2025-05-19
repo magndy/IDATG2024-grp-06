@@ -51,7 +51,7 @@ class City(models.Model):
 class Address(models.Model):
     id = models.AutoField(primary_key=True, db_column='address_id')
     address_line = models.CharField(max_length=255)
-    city = models.ForeignKey(City, on_delete=models.CASCADE, db_column='city_id', null=True)
+    city = models.ForeignKey(City, on_delete=models.CASCADE, db_column='city_id')
     class Meta:
         managed = False
         db_table = 'address'

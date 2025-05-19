@@ -43,11 +43,11 @@ INSERT INTO address (address_id, address_line, city_id) VALUES
 (5, 'Mannerheimintie 10', 5);
 
 INSERT INTO `user` (user_id, username, first_name, last_name, email, password, address, phone, role, is_active) VALUES
-(1, 'jdoe', 'John', 'Doe', 'jdoe@example.com', 'hashed_password_1', 1, '+4712345678', 'customer', TRUE),
-(2, 'annab', 'Anna', 'Berg', 'anna.berg@example.com', 'hashed_password_2', 2, '+4798765432', 'customer', TRUE),
-(3, 'karlsson', 'Karl', 'Karlsson', 'karl.k@example.com', 'hashed_password_3', 3, '+46701112233', 'customer', TRUE),
-(4, 'adminuser', 'Vinjar', 'Berland', 'admin@example.com', 'hashed_password_4', 4, '+4522334455', 'admin', TRUE),
-(5, 'mlehto', 'Maria', 'Lehto', 'maria.lehto@example.com', 'hashed_password_5', 5, '+358401234567', 'customer', TRUE);
+(1, 'jdoe', 'John', 'Doe', 'jdoe@example.com', 'pbkdf2_sha256$1000000$dMROGtdco3ASY9QuP9UzTB$Fl1rE6iEVwJyDByAGeE2HmYIpU4Mxz+b7rhdrtZD1tA=', 1, '+4712345678', 'customer', TRUE),
+(2, 'annab', 'Anna', 'Berg', 'anna.berg@example.com', 'pbkdf2_sha256$1000000$i8T8kb72ADhnTxzVbS9eAK$Rv15x7q6QNvAFw5kthrk0GYnu+77VOkvoRBwvVg0cec=', 2, '+4798765432', 'customer', TRUE),
+(3, 'karlsson', 'Karl', 'Karlsson', 'karl.k@example.com', 'pbkdf2_sha256$1000000$D8pOHIEnEYyTbnUr0cKLD6$JYTOKwI3ffQejoGxYCjPFKEteE5gamapc/tZjb4Wda0=', 3, '+46701112233', 'customer', TRUE),
+(4, 'adminuser', 'Vinjar', 'Berland', 'admin@example.com', 'pbkdf2_sha256$1000000$vnmsMx7RNBwv4b30oxvUzW$I55B/6xWbnU9+jkaNqh1vGXc/roXX/QGY6GbuvQQHYY=', 4, '+4522334455', 'admin', TRUE),
+(5, 'mlehto', 'Maria', 'Lehto', 'maria.lehto@example.com', 'pbkdf2_sha256$1000000$GTqs8Jl7YODqEBn4V0eDsG$1wuQtJptdUgp0LO7Lf1oilpAwTyMHoQjla44ckto0+4=', 5, '+358401234567', 'customer', TRUE);
 
 INSERT INTO shopping_cart (cart_id, user_id, updated_at) VALUES
 (1, 1, '2025-05-05 14:30:00'), -- John Doe

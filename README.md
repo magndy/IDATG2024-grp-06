@@ -123,7 +123,7 @@ cd sql
 sudo mysql
 ```
 
-#### If you encounter an error while logging in because you don't know the MySQL password, follow these steps to reset it: (otherwise skip ahead to [5. Create the database](#create-the-database))
+#### If you encounter an error while logging in because you don't know the MySQL password, follow these steps to reset it: (otherwise skip ahead to [5. Create the database](#5-create-the-database))
 
 
 1.  Stop MySQL:

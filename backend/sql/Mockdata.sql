@@ -68,7 +68,9 @@ INSERT INTO product_image (image_id, product_id, image_url) VALUES
 (19, 19, 'https://pisces.bbystatic.com/image2/BestBuy_US/images/products/5913/5913200_sd.jpg'),
 (20, 20, 'https://pricespy-75b8.kxcdn.com/product/standard/280/13627361.jpg'),
 (21, 21, 'https://m.media-amazon.com/images/I/61-PblYntsL._AC_SL1500_.jpg'),
-(22, 22, 'https://pricespy-75b8.kxcdn.com/product/standard/280/13647254.jpg');
+(22, 22, 'https://pricespy-75b8.kxcdn.com/product/standard/280/13647254.jpg'),
+(23, 2, 'https://www.komplett.no/img/p/1200/1302919_1.jpg'),
+(24, 3, 'https://www.komplett.no/img/p/1200/1302919_7.jpg');
 
 INSERT INTO city (city_id, city_name, postal_code, country) VALUES
 (1, 'Oslo', '0150', 'Norway'),

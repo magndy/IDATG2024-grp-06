@@ -3,7 +3,7 @@ from .views_auth import csrf,login_view, logout_view, me_view
 from .views_register import register_user
 from rest_framework.routers import DefaultRouter
 from .views import (
-    CategoryViewSet,ProductViewSet, ProductImageViewSet,
+    CategoryViewSet,ProductViewSet, ProductImageViewSet,checkout,
     AddressViewSet, UserViewSet, ShoppingCartViewSet, CartItemViewSet,
     OrderStatusViewSet, OrderViewSet, OrderItemViewSet,
     PaymentStatusViewSet, PaymentViewSet
@@ -28,5 +28,6 @@ urlpatterns = [
     path('me/', me_view),
     path('csrf/', csrf),
     path('register/', register_user),
+    path('checkout/',checkout),
     path('', include(router.urls)),
 ]

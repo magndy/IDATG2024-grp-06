@@ -107,12 +107,30 @@ const CheckoutPage: React.FC = () => {
       totalAmount: getCartTotal(),
     };
 
-    console.log("--- Placing Order (Simulation) ---");
-    console.log("Order Data to be sent to backend:", JSON.stringify(orderData, null, 2));
-    alert("Simulating order placement! Check the console for order data.");
+    try {
+      const response = await fetch("http://localhost:8000/api/checkout/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(orderData),
+      });
 
-    clearCart();
-    navigate("/order-confirmation");
+      if (!response.ok) {
+        const errorData = await response.json();
+        setErrors({ form: errorData.message || "Failed to place order." });
+        return;
+  }
+
+  const result = await response.json();
+  console.log("Order placed successfully:", result);
+
+  clearCart();
+  navigate("/order-confirmation");
+} catch (error) {
+  console.error("❌ Error placing order:", error);
+  setErrors({ form: "Something went wrong. Please try again later." });
+}
   };
 
   // Prevent checkout if cart is empty

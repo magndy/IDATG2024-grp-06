@@ -1,8 +1,11 @@
 from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from django.db import transaction
 from rest_framework import viewsets, filters
+from rest_framework import status
 from django_filters.rest_framework import DjangoFilterBackend
 from .models import (
-    Category,Product, ProductImage, Address, User,
+    Category,Product, ProductImage, Address, User,City,
     ShoppingCart, CartItem, OrderStatus, Order, OrderItem,
     PaymentStatus, Payment 
 )
@@ -107,6 +110,90 @@ class OrderStatusViewSet(viewsets.ReadOnlyModelViewSet):
 class OrderViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
+
+@api_view(['POST'])
+@transaction.atomic
+def checkout(request):
+    data = request.data
+
+    try:
+        # 1. Handle city
+        city_name = data['address']['city']
+        postal_code = data['address']['postalCode']
+        country = data['address']['country']
+
+        city, _ = City.objects.get_or_create(
+            city_name=city_name,
+            postal_code=postal_code,
+            country=country
+        )
+
+        # 2. Create address
+        address = Address.objects.create(
+            address_line=data['address']['street'],
+            city=city
+        )
+
+        # 3. Create or get user
+        email = data['contact']['email']
+        user, _ = User.objects.get_or_create(
+            email=email,
+            defaults={
+                'username': email,
+                'first_name': data['address']['firstName'],
+                'last_name': data['address']['lastName'],
+                'phone': data['address']['phone'],
+                'address': address,
+                'password': 'notsecure',
+                'is_active': True,
+            }
+        )
+
+        # 4. Get order status from your predefined DB values
+        try:
+            default_status = OrderStatus.objects.get(status_name='PROCESSING')
+        except OrderStatus.DoesNotExist:
+            return Response(
+                {'message': 'Order status "PROCESSING" not found in the database.'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+        # 5. Create the order
+        order = Order.objects.create(
+            user=user,
+            total_amount=data['totalAmount'],
+            order_status=default_status,
+            shipping_address=address
+        )
+
+        # 6. Create order items
+        for item in data['items']:
+            try:
+                product = Product.objects.get(pk=item['productId'])
+            except Product.DoesNotExist:
+                return Response(
+                    {'message': f'Product with ID {item["productId"]} not found.'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            OrderItem.objects.create(
+                order=order,
+                product=product,
+                quantity=item['quantity'],
+                price_per_unit=item['pricePerUnit']
+            )
+
+        # ✅ Success response
+        return Response(
+            {'message': 'Order placed successfully', 'order_id': order.id},
+            status=status.HTTP_201_CREATED
+        )
+
+    except Exception as e:
+        return Response(
+            {'message': f'Internal server error: {str(e)}'},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
 
 
 class OrderViewSet(viewsets.ReadOnlyModelViewSet):

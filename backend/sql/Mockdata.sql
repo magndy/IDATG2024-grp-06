@@ -3,7 +3,13 @@ INSERT INTO brand (brand_id, name, description) VALUES
 (2, 'Samsung', 'Diverse electronics company known for phones, TVs, and appliances.'),
 (3, 'Sony', 'Global leader in audio, video, and imaging technologies.'),
 (4, 'Dell', 'Well-known for reliable PCs, laptops, and monitors.'),
-(5, 'HP', 'Offers computers, printers, and related accessories for personal and business use.');
+(5, 'HP', 'Offers computers, printers, and related accessories for personal and business use.'),
+(6, 'Logitech', 'Accessories like keyboards, mice, webcams.'),
+(7, 'Nintendo', 'Popular gaming consoles and games.'),
+(8, 'Canon', 'Leading camera and printer manufacturer.'),
+(9, 'Asus', 'Computers, components, and gaming equipment.'),
+(10, 'Bose', 'Premium audio equipment.'),
+(11, 'Microsoft', 'Tech giant producing consoles, laptops, and software.');
 
 
 INSERT INTO category (category_id, name, description, parent_id) VALUES
@@ -11,14 +17,33 @@ INSERT INTO category (category_id, name, description, parent_id) VALUES
 (2, 'Smartphones', 'Mobile phones from various brands.', 1),
 (3, 'Laptops', 'Portable computers for work and gaming.', 1),
 (4, 'Cameras', 'Digital and DSLR cameras for photography.', 1),
-(5, 'Accessories', 'Electronic accessories like chargers, cases, etc.', 1);
+(5, 'Accessories', 'Electronic accessories like chargers, cases, etc.', 1),
+(6, 'Home & Kitchen', 'Appliances and tools for home use.', NULL),
+(7, 'Gaming', 'Gaming consoles, accessories, and gear.', NULL);
 
 INSERT INTO product (product_id, name, description, price, stock_quantity, brand_id, category_id) VALUES
 (1, 'iPhone 14 Pro', 'Apple smartphone with advanced camera and A16 chip.', 1199.00, 25, 1, 2),
 (2, 'Samsung Galaxy S23', 'Flagship Android phone with powerful performance.', 999.99, 30, 2, 2),
 (3, 'Dell XPS 13', 'Compact and powerful ultrabook laptop.', 1299.50, 15, 4, 3),
 (4, 'Sony Alpha A7 III', 'Full-frame mirrorless camera ideal for professionals.', 1999.99, 10, 3, 4),
-(5, 'HP USB-C Dock', 'Docking station for laptops with multiple ports.', 149.00, 50, 5, 5);
+(5, 'HP USB-C Dock', 'Docking station for laptops with multiple ports.', 149.00, 50, 5, 5),
+(6, 'Logitech MX Master 3', 'High-end wireless mouse with ergonomic design.', 99.00, 40, 6, 5),
+(7, 'Nintendo Switch OLED', 'Hybrid gaming console with vibrant OLED screen.', 349.00, 20, 7, 7),
+(8, 'Canon EOS R10', 'Mirrorless camera with advanced autofocus.', 1099.99, 12, 8, 4),
+(9, 'Asus ROG Zephyrus G14', 'High-performance gaming laptop with Ryzen CPU.', 1599.00, 8, 9, 3),
+(10, 'Bose QuietComfort 45', 'Noise-cancelling wireless headphones.', 329.00, 25, 10, 5),
+(11, 'Microsoft Surface Laptop 5', 'Premium ultrabook with touchscreen.', 1399.00, 10, 11, 3),
+(12, 'Logitech StreamCam', 'Webcam optimized for content creators.', 169.00, 35, 6, 5),
+(13, 'HP Envy x360', 'Convertible touchscreen laptop with stylus support.', 899.00, 20, 5, 3),
+(14, 'Apple MacBook Air M2', 'Ultralight laptop with Apple Silicon.', 1249.00, 18, 1, 3),
+(15, 'Samsung Galaxy Tab S8', 'Android tablet with stylus for productivity.', 799.00, 22, 2, 1),
+(16, 'Dell Ultrasharp U2723QE', '4K IPS monitor with USB-C hub.', 629.00, 14, 4, 1),
+(17, 'Sony WH-1000XM5', 'Industry-leading noise-cancelling headphones.', 399.00, 17, 3, 5),
+(18, 'Canon PIXMA TR8620a', 'All-in-one printer for home office.', 179.00, 30, 8, 6),
+(19, 'Instant Pot Duo 7-in-1', 'Multi-function electric pressure cooker.', 99.00, 60, 6, 6),
+(20, 'Asus TUF Gaming F15', 'Affordable gaming laptop with solid specs.', 1049.00, 13, 9, 3),
+(21, 'Microsoft Xbox Series X', 'Next-gen gaming console with 1TB SSD.', 499.00, 16, 11, 7),
+(22, 'HP Omen 25L', 'Gaming desktop with NVIDIA GPU.', 1199.00, 9, 5, 7);
 
 
 INSERT INTO product_image (image_id, product_id, image_url) VALUES
@@ -26,7 +51,24 @@ INSERT INTO product_image (image_id, product_id, image_url) VALUES
 (2, 2, 'https://www.komplett.no/img/p/2272/1302902.jpg?view=gallery&orientation=horizontal'),
 (3, 3, 'https://www.komplett.no/img/p/1200/1313997.jpg'),
 (4, 4, 'https://pricespy-75b8.kxcdn.com/product/standard/280/4703156.jpg'),
-(5, 5, 'https://cf-images.dustin.eu/cdn-cgi/image/fit=contain,format=auto,quality=75,width=828,fit=contain/image/d2000010011307324/hp-usb-c-dock-g5-usb-32-gen-1-31-gen-1-type-c.jpeg');
+(5, 5, 'https://cf-images.dustin.eu/cdn-cgi/image/fit=contain,format=auto,quality=75,width=828,fit=contain/image/d2000010011307324/hp-usb-c-dock-g5-usb-32-gen-1-31-gen-1-type-c.jpeg'),
+(6, 6, 'https://www.bhphotovideo.com/images/images2500x2500/logitech_910_005647_mx_master_3_1502446.jpg'),
+(7, 7, 'https://pricespy-75b8.kxcdn.com/product/standard/280/5817097.jpg'),
+(8, 8, 'https://pricespy-75b8.kxcdn.com/product/standard/280/6475763.jpg'),
+(9, 9, 'https://pisces.bbystatic.com/image2/BestBuy_US/images/products/6403/6403425_sd.jpg'),
+(10, 10, 'https://pricespy-75b8.kxcdn.com/product/standard/280/5843897.jpg'),
+(11, 11, 'https://pricespy-75b8.kxcdn.com/product/standard/280/12220887.jpg'),
+(12, 12, 'https://pricespy-75b8.kxcdn.com/product/standard/280/5278071.jpg'),
+(13, 13, 'https://pricespy-75b8.kxcdn.com/product/standard/280/13661206.jpg'),
+(14, 14, 'https://pricespy-75b8.kxcdn.com/product/standard/280/13323270.jpg'),
+(15, 15, 'https://pricespy-75b8.kxcdn.com/product/standard/280/5973899.jpg'),
+(16, 16, 'https://pricespy-75b8.kxcdn.com/product/standard/280/14488223.jpg'),
+(17, 17, 'https://pricespy-75b8.kxcdn.com/product/standard/280/6219512.jpg'),
+(18, 18, 'https://pisces.bbystatic.com/image2/BestBuy_US/images/products/6494/6494259_sd.jpg'),
+(19, 19, 'https://pisces.bbystatic.com/image2/BestBuy_US/images/products/5913/5913200_sd.jpg'),
+(20, 20, 'https://pricespy-75b8.kxcdn.com/product/standard/280/13627361.jpg'),
+(21, 21, 'https://m.media-amazon.com/images/I/61-PblYntsL._AC_SL1500_.jpg'),
+(22, 22, 'https://pricespy-75b8.kxcdn.com/product/standard/280/13647254.jpg');
 
 INSERT INTO city (city_id, city_name, postal_code, country) VALUES
 (1, 'Oslo', '0150', 'Norway'),
